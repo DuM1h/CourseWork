@@ -44,7 +44,7 @@ namespace CourseWork
                         foreach (var k in kdx)
                         {
                             var target = board.GetFigureAt((char)(PositionLetter + k), PositionNumber);
-                            if (target != null)
+                            if (target != null && k!=0)
                                 break;
                             boardCopy = new ChessBoard(board);
                             King kingCopy = new King(PositionLetter, PositionNumber, IsWhite);
@@ -61,7 +61,7 @@ namespace CourseWork
                         foreach (var q in qdx)
                         {
                             var target = board.GetFigureAt((char)(PositionLetter + q), PositionNumber);
-                            if (target != null)
+                            if (target != null && q != 0)
                                 break;
                             boardCopy = new ChessBoard(board);
                             King kingCopy = new King(PositionLetter, PositionNumber, IsWhite);
@@ -80,7 +80,7 @@ namespace CourseWork
                     foreach (var k in kdx)
                     {
                         var target = board.GetFigureAt((char)(PositionLetter + k), PositionNumber);
-                        if (target != null)
+                        if (target != null && k != 0)
                             break;
                         boardCopy = new ChessBoard(board);
                         King kingCopy = new King(PositionLetter, PositionNumber, IsWhite);
@@ -97,7 +97,7 @@ namespace CourseWork
                     foreach (var q in qdx)
                     {
                         var target = board.GetFigureAt((char)(PositionLetter + q), PositionNumber);
-                        if (target != null)
+                        if (target != null && q!=0)
                             break;
                         boardCopy = new ChessBoard(board);
                         King kingCopy = new King(PositionLetter, PositionNumber, IsWhite);

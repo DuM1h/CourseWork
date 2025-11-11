@@ -354,6 +354,18 @@ namespace CourseWork
                     }
                 }
             }
+            Fen = chessBoard.Fen;
+            IsWhiteTurn = chessBoard.IsWhiteTurn;
+            IsWhiteInCheck = chessBoard.IsWhiteInCheck;
+            IsBlackInCheck = chessBoard.IsBlackInCheck;
+            CanWhiteCastleKingside = chessBoard.CanWhiteCastleKingside;
+            CanWhiteCastleQueenside = chessBoard.CanWhiteCastleQueenside;
+            CanBlackCastleKingside = chessBoard.CanBlackCastleKingside;
+            CanBlackCastleQueenside = chessBoard.CanBlackCastleQueenside;
+            EnPassantAvailable = chessBoard.EnPassantAvailable;
+            EnPassantTargetFile = chessBoard.EnPassantTargetFile;
+            halfmoveClock = chessBoard.halfmoveClock;
+            fullmoveNumber= chessBoard.fullmoveNumber;
         }
     }
 }
