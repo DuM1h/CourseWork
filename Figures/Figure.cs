@@ -9,6 +9,31 @@ namespace CourseWork
         public int PositionNumber { get; protected set; }
         public bool IsWhite { get; protected set; }
         public int Value { get; protected set; }
+        public char Initial
+        {
+            get
+            {
+                if (IsWhite)
+                {
+                    if (this is King) return 'K';
+                    if (this is Queen) return 'Q';
+                    if (this is Rook) return 'R';
+                    if (this is Bishop) return 'B';
+                    if (this is Knight) return 'N';
+                    if (this is Pawn) return 'P';
+                }
+                else
+                {
+                    if (this is King) return 'k';
+                    if (this is Queen) return 'q';
+                    if (this is Rook) return 'r';
+                    if (this is Bishop) return 'b';
+                    if (this is Knight) return 'n';
+                    if (this is Pawn) return 'p';
+                }
+                return ' ';
+            }
+        }
         public List<Figure> AttackingFigures
         { get; protected set; }
         public List<Figure> ProtectingFigures

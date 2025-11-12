@@ -7,8 +7,6 @@ public class ChessBoard
     public Figure[,] board = new Figure[8, 8];
     public string Fen { get; private set; }
     public bool IsWhiteTurn { get; private set; }
-    public bool IsWhiteInCheck { get; private set; }
-    public bool IsBlackInCheck { get; private set; }
     public bool CanWhiteCastleKingside { get; private set; }
     public bool CanWhiteCastleQueenside { get; private set; }
     public bool CanBlackCastleKingside { get; private set; }
@@ -322,7 +320,7 @@ public class ChessBoard
 
             if (shieldPiece != null && shieldPiece.IsWhite == isWhite && shieldPiece is Pawn)
             {
-                safetyBonus += 0.1f;
+                safetyBonus += 0.03f;
             }
         }
         return safetyBonus;
@@ -410,8 +408,6 @@ public class ChessBoard
         }
         Fen = chessBoard.Fen;
         IsWhiteTurn = chessBoard.IsWhiteTurn;
-        IsWhiteInCheck = chessBoard.IsWhiteInCheck;
-        IsBlackInCheck = chessBoard.IsBlackInCheck;
         CanWhiteCastleKingside = chessBoard.CanWhiteCastleKingside;
         CanWhiteCastleQueenside = chessBoard.CanWhiteCastleQueenside;
         CanBlackCastleKingside = chessBoard.CanBlackCastleKingside;
@@ -470,7 +466,7 @@ public class ChessBoard
                 }
                 else
                 {
-                    char symbol = board[i, j].Symbol;
+                    char symbol = board[i, j].Initial;
                     rows[i] += symbol;
                 }
             }
