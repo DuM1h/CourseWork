@@ -17,26 +17,31 @@ class Program
         string choice;
         do
         {
+            Console.Clear();
             Console.WriteLine("1. Показати шахівницю");
             Console.WriteLine("2. Прорахувати найкращий хід");
-            Console.WriteLine("3. Вийти");
+            Console.WriteLine("3. Вивести FEN-нотацію");
+            Console.WriteLine("0. Вийти");
 
             choice = Console.ReadLine();
             switch (choice)
             {
                 case "1":
                     chessBoard.ShowBoard();
-                    break;
+                    Continue(); break;
                 case "2":
                     CalculateBestMove(chessBoard);
-                    break;
+                    Continue(); break;
                 case "3":
+                    chessBoard.PrintFen();
+                    Continue(); break;
+                case "0":
                     return;
                 default:
                     Console.WriteLine("Невірний вибір.");
-                    break;
+                    Continue(); break;
             }
-        } while(choice!="3");
+        } while(choice!="0");
     }
 
     static void CalculateBestMove(ChessBoard board)
@@ -118,6 +123,17 @@ class Program
             }
         }
         PrintResult(bestFigure, from, to);
+
+        Console.WriteLine("Оновити позицію?");
+        Console.WriteLine("1. Так");
+        string choice;
+        choice = Console.ReadLine();
+        if (choice == "1" && bestFigure != null)
+        {
+            var figureToMove = board.GetFigureAt(from.Item1, from.Item2);
+            figureToMove.Move(to.Item1, to.Item2, board);
+        }
+
     }
     static void PrintResult(Figure bestFigure, (char, int) from, (char, int) to)
     {
@@ -130,5 +146,11 @@ class Program
         {
             Console.WriteLine("Немає можливих ходів для покращення позиції.");
         }
+    }
+
+    static void Continue()
+    {
+        Console.WriteLine("Для продовження натисніть Enter");
+        Console.ReadLine();
     }
 }
