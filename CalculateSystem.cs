@@ -31,6 +31,8 @@ namespace CourseWork
                     var figure = board.GetFigureAt((char)('h' - j), 8 - i);
                     if (figure == null)
                         continue;
+                    if (figure.IsWhite != board.IsWhiteTurn)
+                        continue;
                     var possibleMoves = figure.GetPossibleMoves(board);
                     foreach (var move in possibleMoves)
                     {
@@ -41,7 +43,7 @@ namespace CourseWork
                         if (kingCopy.IsChecking(boardCopy))
                             continue;
 
-                        float result = FindBestScore(boardCopy, depth-1);
+                        float result = -FindBestScore(boardCopy, depth-1);
                         if (result > bestResult)
                         {
                             bestResult = result;
@@ -106,7 +108,8 @@ namespace CourseWork
                     var figure = board.GetFigureAt((char)('h' - j), 8 - i);
                     if (figure == null)
                         continue;
-
+                    if (figure.IsWhite != board.IsWhiteTurn)
+                        continue;
                     var possibleMoves = figure.GetPossibleMoves(board);
                     foreach (var move in possibleMoves)
                     {
