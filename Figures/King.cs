@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 
 namespace CourseWork;
 
@@ -6,9 +7,9 @@ public class King : Figure
 {
     public King(char positionLetter, int positionNumber, bool isWhite) : base(positionLetter, positionNumber, isWhite) { }
 
-    public override List<(char, int)> GetPossibleMoves(ChessBoard board, bool includeAllies = false)
+    public override List<Move> GetPossibleMoves(ChessBoard board, bool includeAllies = false)
     {
-        var moves = new List<(char, int)>();
+        var moves = new List<Move>();
         int[] dx = { -1, 0, 1 };
         int[] dy = { -1, 0, 1 };
 
@@ -29,7 +30,7 @@ public class King : Figure
                     {
                         kingCopy.Move(newLetter, newNumber, boardCopy);
                         if (!kingCopy.IsChecking(boardCopy))
-                            moves.Add((newLetter, newNumber));                            
+                            moves.Add(new Move(this, Position, (newLetter, newNumber), target));                            
                     }
                 }
             }
@@ -53,7 +54,7 @@ public class King : Figure
                         if (kingCopy.IsChecking(boardCopy))
                             break;
                         if (k == 2)
-                            moves.Add((newLetter, PositionNumber));
+                            moves.Add(new Move(this, Position, (newLetter, PositionNumber), target));
                     }
                 }
                 if (board.CanWhiteCastleQueenside)
@@ -70,7 +71,7 @@ public class King : Figure
                         if (kingCopy.IsChecking(boardCopy))
                             break;
                         if (q == -2)
-                            moves.Add((newLetter, PositionNumber));
+                            moves.Add(new Move(this, Position, (newLetter, PositionNumber), target));
                     }
                 }
             break;
@@ -89,7 +90,7 @@ public class King : Figure
                     if (kingCopy.IsChecking(boardCopy))
                         break;
                     if (k == 2)
-                        moves.Add((newLetter, PositionNumber));
+                        moves.Add(new Move(this, Position, (newLetter, PositionNumber), target));
                 }
             }
             if (board.CanBlackCastleQueenside)
@@ -106,7 +107,7 @@ public class King : Figure
                     if (kingCopy.IsChecking(boardCopy))
                         break;
                     if (q == -2)
-                        moves.Add((newLetter, PositionNumber));
+                        moves.Add(new Move(this, Position, (newLetter, PositionNumber), target));
                 }
             }
             break;
@@ -127,20 +128,20 @@ public class King : Figure
         {
             if (figure == null) continue;
             if (figure is King) continue;
-            foreach (var (toLetter, toNumber) in figure.GetPossibleMoves(chessBoard))
+            foreach (var move in figure.GetPossibleMoves(chessBoard))
             {
                 if (figure is Pawn)
                 {
                     if (Math.Abs((char)(this.PositionLetter - figure.PositionLetter)) == 1)
                     {
-                        if ((toLetter == this.PositionLetter) && (toNumber == this.PositionNumber))
+                        if (move.To == Position)
                         {
                             isChecked = true;
                             this.AttackingFigures.Add(figure);
                         }
                     }
                 } 
-                else if ((toLetter == PositionLetter) && (toNumber == PositionNumber))
+                else if (move.To == Position)
                 {
                     isChecked = true;
                     this.AttackingFigures.Add(figure);

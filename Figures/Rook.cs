@@ -6,9 +6,9 @@ public class Rook : Figure
 {
     public Rook(char positionLetter, int positionNumber, bool isWhite, int value) : base(positionLetter, positionNumber, isWhite, value) { }
 
-    public override List<(char, int)> GetPossibleMoves(ChessBoard board, bool includeAllies = false)
+    public override List<Move> GetPossibleMoves(ChessBoard board, bool includeAllies = false)
     {
-        var moves = new List<(char, int)>();
+        var moves = new List<Move>();
         int[] dx = { -1, 0, 1 };
         int[] dy = { -1, 0, 1 };
 
@@ -25,13 +25,13 @@ public class Rook : Figure
                         var target = board.GetFigureAt(newLetter, newNumber);
                         if (target == null)
                         {
-                            moves.Add((newLetter, newNumber));
+                            moves.Add(new Move(this, Position, (newLetter, newNumber), target));
                         }
                         else
                         {
                             if (target.IsWhite != IsWhite || includeAllies)
                             {
-                                moves.Add((newLetter, newNumber));
+                                moves.Add(new Move(this, Position, (newLetter, newNumber), target));
                             }
                             break;
                         }

@@ -7,6 +7,7 @@ public abstract class Figure
 {
     public char PositionLetter { get; protected set; }
     public int PositionNumber { get; protected set; }
+    public (char, int) Position { get; protected set; }
     public bool IsWhite { get; protected set; }
     public int Value { get; protected set; }
     public char Initial
@@ -58,15 +59,17 @@ public abstract class Figure
         PositionNumber = positionNumber;
         IsWhite = isWhite;
         Value = value;
+        Position = (positionLetter, positionNumber);
     }
     public Figure(char positionLetter, int positionNumber, bool isWhite)
     {
         PositionLetter = positionLetter;
         PositionNumber = positionNumber;
         IsWhite = isWhite;
+        Position = (positionLetter, positionNumber);
     }
 
-    public abstract List<(char, int)> GetPossibleMoves(ChessBoard board, bool includeAllies = false);
+    public abstract List<Move> GetPossibleMoves(ChessBoard board, bool includeAllies = false);
     public void Move(char toLetter,int toNumber, ChessBoard board)
     {
         int fromLetter = PositionLetter;
@@ -81,6 +84,7 @@ public abstract class Figure
         bool isAttacked = false;
         AttackingFigures = new List<Figure>();
         Figure[,] opponentsFigures;
+        (char, int) pos = (this.PositionLetter, this.PositionNumber);
         if (this.IsWhite)
             opponentsFigures = chessBoard.GetBlackFigures();
         else
@@ -88,13 +92,13 @@ public abstract class Figure
         foreach (Figure figure in opponentsFigures)
         {
             if (figure == null) continue;
-            foreach (var (toLetter, toNumber) in figure.GetPossibleMoves(chessBoard))
+            foreach (Move move in figure.GetPossibleMoves(chessBoard))
             {
                 if (figure is Pawn)
                 {
                     if (Math.Abs((char)(this.PositionLetter - figure.PositionLetter)) == 1)
                     {
-                        if ((toLetter == this.PositionLetter) && (toNumber == this.PositionNumber))
+                        if (move.To == pos)
                         {
                             isAttacked = true;
                             this.AttackingFigures.Add(figure);
@@ -107,7 +111,7 @@ public abstract class Figure
                 }
                 else
                 {
-                    if ((toLetter == PositionLetter) && (toNumber == PositionNumber))
+                    if (move.To == Position)
                     {
                         isAttacked = true;
                         this.AttackingFigures.Add(figure);
@@ -130,13 +134,13 @@ public abstract class Figure
         foreach (Figure figure in opponentsFigures)
         {
             if (figure == null) continue;
-            foreach (var (toLetter, toNumber) in figure.GetPossibleMoves(chessBoard, true))
+            foreach (var move in figure.GetPossibleMoves(chessBoard, true))
             {
                 if (figure is Pawn)
                 {
                     if (Math.Abs((char)(this.PositionLetter - figure.PositionLetter)) == 1)
                     {
-                        if ((toLetter == this.PositionLetter) && (toNumber == this.PositionNumber))
+                        if (move.To == Position)
                         {
                             isProtected = true;
                             this.ProtectingFigures.Add(figure);
@@ -149,7 +153,7 @@ public abstract class Figure
                 }
                 else
                 {
-                    if ((toLetter == PositionLetter) && (toNumber == PositionNumber))
+                    if (move.To == Position)
                     {
                         isProtected = true;
                         this.ProtectingFigures.Add(figure);

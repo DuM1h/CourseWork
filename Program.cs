@@ -1,7 +1,9 @@
 ﻿using System;
 
 namespace CourseWork;
-
+// 5rk1/1Q3pp1/6np/p2pB3/3P4/P1n5/2P3PP/4R1K1 w - a6 0 23
+// До сортування - 
+// Після сортування - 
 class Program
 {
     static void Main()
@@ -19,6 +21,7 @@ class Program
             Console.WriteLine("1. Показати шахівницю");
             Console.WriteLine("2. Прорахувати найкращий хід");
             Console.WriteLine("3. Вивести FEN-нотацію");
+            Console.WriteLine("4. Ввести нову FEN-нотацію");
             Console.WriteLine("0. Вийти");
 
             choice = Console.ReadLine();
@@ -38,6 +41,11 @@ class Program
                     Continue(); break;
                 case "3":
                     chessBoard.PrintFen();
+                    Continue(); break;
+                case "4":
+                    Console.WriteLine("Введіть FEN-нотацію: ");
+                    fen = Console.ReadLine();
+                    chessBoard = new ChessBoard(fen);
                     Continue(); break;
                 case "0":
                     return;

@@ -43,7 +43,7 @@ static public class CalculateSystem
                     ChessBoard boardCopy = new(board);
                     var figureCopy = boardCopy.GetFigureAt(figure.PositionLetter, figure.PositionNumber);
                     var kingCopy = board.IsWhiteTurn ? boardCopy.GetWhiteKing() : boardCopy.GetBlackKing();
-                    figureCopy.Move(move.Item1, move.Item2, boardCopy);
+                    figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
                     if (kingCopy.IsChecking(boardCopy))
                         continue;
 
@@ -53,7 +53,7 @@ static public class CalculateSystem
                         bestResult = result;
                         bestFigure = board.GetFigureAt((char)('h' - j), 8 - i);
                         from = (bestFigure.PositionLetter, bestFigure.PositionNumber);
-                        to = move;
+                        to = move.To;
                     }
                 }                    
             }
@@ -125,7 +125,7 @@ static public class CalculateSystem
                     ChessBoard boardCopy = new(board);
                     var figureCopy = boardCopy.GetFigureAt(figure.PositionLetter, figure.PositionNumber);
                     var kingCopy = board.IsWhiteTurn ? boardCopy.GetWhiteKing() : boardCopy.GetBlackKing();
-                    figureCopy.Move(move.Item1, move.Item2, boardCopy);
+                    figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
 
                     if (kingCopy.IsChecking(boardCopy))
                         continue;
@@ -141,4 +141,33 @@ static public class CalculateSystem
         }
         return alpha;
     }
+
+    //static List<Move> GenerateLegalMoves(ChessBoard board)
+    //{
+    //    var moves = new List<Move>();
+    //    for (int i = 0; i < 8; i++)
+    //    {
+    //        for (int j = 0; j < 8; j++)
+    //        {
+    //            var figure = board.GetFigureAt((char)('h' - j), 8 - i);
+    //            if (figure == null || figure.IsWhite != board.IsWhiteTurn)
+    //                continue;
+
+    //            var possibleMoves = figure.GetPossibleMoves(board);
+    //            foreach (var move in possibleMoves)
+    //            {
+    //                ChessBoard boardCopy = new(board);
+    //                var figureCopy = boardCopy.GetFigureAt(figure.PositionLetter, figure.PositionNumber);
+    //                var kingCopy = board.IsWhiteTurn ? boardCopy.GetWhiteKing() : boardCopy.GetBlackKing();
+    //                figureCopy.Move(move.Item1, move.Item2, boardCopy);
+    //                if (!kingCopy.IsChecking(boardCopy))
+    //                {
+    //                    var captured = board.GetFigureAt(move.Item1, move.Item2);
+    //                    moves.Add(new Move(figure, (figure.PositionLetter, figure.PositionNumber), move, captured));
+    //                }
+    //            }
+    //        }
+    //    }
+    //    return moves;
+    //}
 }

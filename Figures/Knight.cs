@@ -6,9 +6,9 @@ public class Knight : Figure
 {
     public Knight(char positionLetter, int positionNumber, bool isWhite, int value) : base(positionLetter, positionNumber, isWhite, value) { }
 
-    public override List<(char, int)> GetPossibleMoves(ChessBoard board, bool includeAllies = false)
+    public override List<Move> GetPossibleMoves(ChessBoard board, bool includeAllies = false)
     {
-        var moves = new List<(char, int)>();
+        var moves = new List<Move>();
         int[] dx = { -2, -1, 1, 2 };
         int[] dy = { -2, -1, 1, 2 };
         
@@ -25,7 +25,7 @@ public class Knight : Figure
                         var target = board.GetFigureAt(newLetter, newNumber);
                         if (target==null || (target != null && (target.IsWhite != IsWhite || includeAllies)))
                         {
-                            moves.Add((newLetter, newNumber));
+                            moves.Add(new Move(this, Position, (newLetter, newNumber), target));
                         }
                     }
                 }
