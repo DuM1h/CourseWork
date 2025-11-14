@@ -13,8 +13,8 @@ public class ChessBoard
     public bool CanBlackCastleQueenside { get; private set; }
     public bool EnPassantAvailable { get; private set; }
     public char[] EnPassantTarget { get; private set; }
-    private int halfmoveClock;
-    private int fullmoveNumber;
+    public int HalfmoveClock { get; private set; }
+    public int FullmoveNumber { get; private set; }
 
 
     public ChessBoard(string fen)
@@ -86,9 +86,9 @@ public class ChessBoard
             }
         }
         if (figure is Pawn || board[toRow, toCol] != null)
-            halfmoveClock = 0;
+            HalfmoveClock = 0;
         else
-            halfmoveClock++;
+            HalfmoveClock++;
         if (figure is Pawn && Math.Abs(toNumber - fromNumber) == 2)
         {
             EnPassantAvailable = true;
@@ -101,7 +101,7 @@ public class ChessBoard
         }
         SwitchTurn();
         if (!IsWhiteTurn)
-            fullmoveNumber++;
+            FullmoveNumber++;
         UpdateFen();
     }
 
@@ -150,8 +150,8 @@ public class ChessBoard
             EnPassantTarget = EnPassantTargetFile;
         }
 
-        halfmoveClock = int.Parse(fenParts[4]);
-        fullmoveNumber = int.Parse(fenParts[5]);
+        HalfmoveClock = int.Parse(fenParts[4]);
+        FullmoveNumber = int.Parse(fenParts[5]);
 
         for (int i = 0; i < 8; i++)
         {
@@ -311,8 +311,8 @@ public class ChessBoard
         CanBlackCastleQueenside = chessBoard.CanBlackCastleQueenside;
         EnPassantAvailable = chessBoard.EnPassantAvailable;
         EnPassantTarget = chessBoard.EnPassantTarget;
-        halfmoveClock = chessBoard.halfmoveClock;
-        fullmoveNumber= chessBoard.fullmoveNumber;
+        HalfmoveClock = chessBoard.HalfmoveClock;
+        FullmoveNumber= chessBoard.FullmoveNumber;
     }
     private void UpdateFen()
     {
@@ -343,8 +343,8 @@ public class ChessBoard
         else
             fenParts[3] = "-";
 
-        fenParts[4] = halfmoveClock.ToString();
-        fenParts[5] = fullmoveNumber.ToString();
+        fenParts[4] = HalfmoveClock.ToString();
+        fenParts[5] = FullmoveNumber.ToString();
 
         for (int i = 0; i < 8; i++)
         {

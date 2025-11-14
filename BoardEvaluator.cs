@@ -38,13 +38,14 @@ static public class BoardEvaluator
                 else
                     opponentValue += fig.Value;
 
-                float centerBonus = GetCenterControlBonus(fig);
+                int numMove = board.FullmoveNumber;
+                float centerBonus = GetCenterControlBonus(fig, numMove);
                 if (isMyFigure)
                     coefficient += centerBonus;
                 else
                     opponentCoefficient += centerBonus;
 
-                if ((fig.IsAttacking(board) && !fig.IsProtected(board)) || 
+                if ((fig.IsAttacking(board) && !fig.IsProtected(board)) ||
                     (fig.IsAttacking(board) && fig.IsProtected(board) && (fig.ProtectingFigures.Count < fig.AttackingFigures.Count)))
                 {
                     if (isMyFigure)
@@ -63,7 +64,7 @@ static public class BoardEvaluator
         coefficient -= GetKingSafetyPenalty(myKing, board);
         opponentCoefficient -= GetKingSafetyPenalty(opponentKing, board);
 
-        
+
         return (value * coefficient) - (opponentValue * opponentCoefficient);
     }
 
@@ -87,13 +88,15 @@ static public class BoardEvaluator
 
             if (shieldPiece != null && shieldPiece.IsWhite == isWhite && shieldPiece is Pawn)
             {
-                safetyBonus += 0.03f;
+                safetyBonus += 0.005f;
             }
         }
         return safetyBonus;
     }
-    private static float GetCenterControlBonus(Figure fig)
+    private static float GetCenterControlBonus(Figure fig, int n)
     {
+        if (n > 10)
+            return 0.0f;
         char letter = fig.PositionLetter;
         int number = fig.PositionNumber;
 
@@ -138,7 +141,7 @@ static public class BoardEvaluator
                 if (attackingPiece != null && attackingPiece.IsWhite != isWhite)
                     safetyPenalty += 0.03f;
                 if (attackingPiece == null)
-                    safetyPenalty += 0.005f;
+                    safetyPenalty += 0.001f;
             }
         }
         return safetyPenalty;

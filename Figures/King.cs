@@ -5,7 +5,7 @@ namespace CourseWork;
 
 public class King : Figure
 {
-    public King(char positionLetter, int positionNumber, bool isWhite) : base(positionLetter, positionNumber, isWhite) { }
+    public King(char positionLetter, int positionNumber, bool isWhite) : base(positionLetter, positionNumber, isWhite) { Type = FigureType.King; }
 
     public override List<Move> GetPossibleMoves(ChessBoard board, bool includeAllies = false)
     {
@@ -26,11 +26,17 @@ public class King : Figure
                 if (newLetter >= 'a' && newLetter <= 'h' && newNumber >= 1 && newNumber <= 8)
                 {
                     var target = board.GetFigureAt(newLetter, newNumber);
-                    if (target==null || (target != null && (target.IsWhite != IsWhite || includeAllies )))
+                    if (target == null || (target != null && (target.IsWhite != IsWhite || includeAllies)))
                     {
                         kingCopy.Move(newLetter, newNumber, boardCopy);
                         if (!kingCopy.IsChecking(boardCopy))
-                            moves.Add(new Move(this, Position, (newLetter, newNumber), target));                            
+                            moves.Add(new Move(this.Type, Position, (newLetter, newNumber)));
+                    }
+                    if (target != null && (target.IsWhite != IsWhite || includeAllies))
+                    {
+                        kingCopy.Move(newLetter, newNumber, boardCopy);
+                        if (!kingCopy.IsChecking(boardCopy))
+                            moves.Add(new Move(this.Type, Position, (newLetter, newNumber), target.Type));
                     }
                 }
             }
@@ -54,7 +60,7 @@ public class King : Figure
                         if (kingCopy.IsChecking(boardCopy))
                             break;
                         if (k == 2)
-                            moves.Add(new Move(this, Position, (newLetter, PositionNumber), target));
+                            moves.Add(new Move(this.Type, Position, (newLetter, PositionNumber)));
                     }
                 }
                 if (board.CanWhiteCastleQueenside)
@@ -71,7 +77,7 @@ public class King : Figure
                         if (kingCopy.IsChecking(boardCopy))
                             break;
                         if (q == -2)
-                            moves.Add(new Move(this, Position, (newLetter, PositionNumber), target));
+                            moves.Add(new Move(this.Type, Position, (newLetter, PositionNumber)));
                     }
                 }
             break;
@@ -90,7 +96,7 @@ public class King : Figure
                     if (kingCopy.IsChecking(boardCopy))
                         break;
                     if (k == 2)
-                        moves.Add(new Move(this, Position, (newLetter, PositionNumber), target));
+                        moves.Add(new Move(this.Type, Position, (newLetter, PositionNumber)));
                 }
             }
             if (board.CanBlackCastleQueenside)
@@ -107,7 +113,7 @@ public class King : Figure
                     if (kingCopy.IsChecking(boardCopy))
                         break;
                     if (q == -2)
-                        moves.Add(new Move(this, Position, (newLetter, PositionNumber), target));
+                        moves.Add(new Move(this.Type, Position, (newLetter, PositionNumber)));
                 }
             }
             break;

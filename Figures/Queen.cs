@@ -4,7 +4,7 @@ namespace CourseWork;
 
 public class Queen : Figure
 {
-    public Queen(char positionLetter, int positionNumber, bool isWhite, int value) : base(positionLetter, positionNumber, isWhite, value) { }
+    public Queen(char positionLetter, int positionNumber, bool isWhite, int value) : base(positionLetter, positionNumber, isWhite, value) { Type = FigureType.Queen; }
 
     public override List<Move> GetPossibleMoves(ChessBoard board, bool includeAllies = false)
     {
@@ -25,13 +25,13 @@ public class Queen : Figure
                         var target = board.GetFigureAt(newLetter, newNumber);
                         if (target == null)
                         {
-                            moves.Add(new Move(this, Position, (newLetter, newNumber), target));
+                            moves.Add(new Move(this.Type, Position, (newLetter, newNumber)));
                         }
                         else
                         {
                             if (target.IsWhite != IsWhite || includeAllies)
                             {
-                                moves.Add(new Move(this, Position, (newLetter, newNumber), target));
+                                moves.Add(new Move(this.Type, Position, (newLetter, newNumber), target.Type));
                             }
                             break;
                         }

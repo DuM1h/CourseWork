@@ -4,7 +4,7 @@ namespace CourseWork;
 
 public class Bishop : Figure
 {
-    public Bishop(char positionLetter, int positionNumber, bool isWhite, int value) : base(positionLetter, positionNumber, isWhite, value) { }
+    public Bishop(char positionLetter, int positionNumber, bool isWhite, int value) : base(positionLetter, positionNumber, isWhite, value) { Type = FigureType.Bishop; }
 
     public override List<Move> GetPossibleMoves(ChessBoard board, bool includeAllies = false)
     {
@@ -25,13 +25,13 @@ public class Bishop : Figure
                         var target = board.GetFigureAt(newLetter, newNumber);
                         if (target == null)
                         {
-                            moves.Add(new Move(this, Position, (newLetter, newNumber), target));
+                            moves.Add(new Move(this.Type, Position, (newLetter, newNumber)));
                         }
                         else
                         {
                             if (target.IsWhite != IsWhite || includeAllies)
                             {
-                                moves.Add(new Move(this, Position, (newLetter, newNumber), target));
+                                moves.Add(new Move(this.Type, Position, (newLetter, newNumber), target.Type));
                             }
                             break;
                         }

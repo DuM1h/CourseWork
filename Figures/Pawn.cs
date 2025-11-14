@@ -4,19 +4,18 @@ namespace CourseWork;
 
 public class Pawn : Figure
 {
-    public Pawn(char positionLetter, int positionNumber, bool isWhite, int value) : base(positionLetter, positionNumber, isWhite, value) { }
+    public Pawn(char positionLetter, int positionNumber, bool isWhite, int value) : base(positionLetter, positionNumber, isWhite, value) { Type = FigureType.Pawn; }
     public override List<Move> GetPossibleMoves(ChessBoard board, bool includeAllies = false)
     {
         var moves = new List<Move>();
         int direction = IsWhite ? 1 : -1;
         var nextPosition = board.GetFigureAt(PositionLetter, PositionNumber + direction);
         if (nextPosition == null)
-            moves.Add(new Move(this, Position, (PositionLetter, PositionNumber+1*direction), nextPosition));
+            moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber+1*direction)));
 
-        var doubleStepPosition = board.GetFigureAt(PositionLetter, PositionNumber + 2 * direction);
         if ((IsWhite && PositionNumber == 2 || !IsWhite && PositionNumber == 7) &&
             board.GetFigureAt(PositionLetter, PositionNumber + 2 * direction) == null)
-            moves.Add(new Move(this, Position, (PositionLetter, PositionNumber+2*direction), doubleStepPosition));
+            moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber+2*direction)));
 
         foreach (var dx in new[] { -1, 1 })
         {
@@ -28,7 +27,7 @@ public class Pawn : Figure
 
             var target = board.GetFigureAt(newLetter, newNumber);
             if (target != null && (target.IsWhite != IsWhite || includeAllies))
-                moves.Add(new Move(this, Position, (newLetter, newNumber), target));
+                moves.Add(new Move(this.Type, Position, (newLetter, newNumber), target.Type));
         }
 
         return moves;

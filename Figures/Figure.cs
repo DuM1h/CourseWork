@@ -10,27 +10,19 @@ public abstract class Figure
     public (char, int) Position { get; protected set; }
     public bool IsWhite { get; protected set; }
     public int Value { get; protected set; }
+    public FigureType Type { get; protected set; }
     public char Initial
     {
         get
         {
-            if (IsWhite)
+            switch (Type)
             {
-                if (this is King) return 'K';
-                if (this is Queen) return 'Q';
-                if (this is Rook) return 'R';
-                if (this is Bishop) return 'B';
-                if (this is Knight) return 'N';
-                if (this is Pawn) return 'P';
-            }
-            else
-            {
-                if (this is King) return 'k';
-                if (this is Queen) return 'q';
-                if (this is Rook) return 'r';
-                if (this is Bishop) return 'b';
-                if (this is Knight) return 'n';
-                if (this is Pawn) return 'p';
+                case (FigureType.King): return IsWhite ? 'K' : 'k'; break;
+                case (FigureType.Queen): return IsWhite ? 'Q': 'q'; break;
+                case (FigureType.Rook): return IsWhite ? 'R': 'r'; break;
+                case (FigureType.Bishop): return IsWhite ? 'B': 'b' ; break;
+                case (FigureType.Knight): return IsWhite ? 'N': 'n' ; break;
+                case (FigureType.Pawn): return IsWhite ? 'P': 'p'; break;
             }
             return ' ';
         }
@@ -43,12 +35,15 @@ public abstract class Figure
     {
         get
         {
-            if (this is King) return IsWhite ? '♔' : '♚';
-            if (this is Queen) return IsWhite ? '♕' : '♛';
-            if (this is Rook) return IsWhite ? '♖' : '♜';
-            if (this is Bishop) return IsWhite ? '♗' : '♝';
-            if (this is Knight) return IsWhite ? '♘' : '♞';
-            if (this is Pawn) return IsWhite ? '♙' : '♟';
+            switch (Type)
+            {
+                case (FigureType.King): return IsWhite ? '♔' : '♚';
+                case (FigureType.Queen): return IsWhite ? '♕' : '♛';
+                case (FigureType.Rook): return IsWhite ? '♖' : '♜';
+                case (FigureType.Bishop): return IsWhite ? '♗' : '♝';
+                case (FigureType.Knight): return IsWhite ? '♘' : '♞';
+                case (FigureType.Pawn): return IsWhite ? '♙' : '♟';
+          }
             return ' ';
         }
     }

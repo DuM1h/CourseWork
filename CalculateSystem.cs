@@ -36,10 +36,6 @@ static public class CalculateSystem
             var figureCopy = boardCopy.GetFigureAt(move.From.Item1, move.From.Item2);
             var kingCopy = board.IsWhiteTurn ? boardCopy.GetWhiteKing() : boardCopy.GetBlackKing();
             figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
-            if (kingCopy.IsChecking(boardCopy))
-                continue;
-            if (move.CapturedFigure is King)
-                continue;
             float result = -FindBestScore(boardCopy, depth-1, -beta, -bestResult);
             if (result > bestResult)
             {
@@ -108,11 +104,6 @@ static public class CalculateSystem
             var figureCopy = boardCopy.GetFigureAt(move.From.Item1, move.From.Item2);
             var kingCopy = board.IsWhiteTurn ? boardCopy.GetWhiteKing() : boardCopy.GetBlackKing();
             figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
-
-            if (kingCopy.IsChecking(boardCopy))
-                continue;
-            if (move.CapturedFigure is King)
-                continue;
             float score = -FindBestScore(boardCopy, depth - 1, -beta, -alpha);
 
             if (score >= beta)
