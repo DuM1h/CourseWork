@@ -2,8 +2,9 @@
 
 namespace CourseWork;
 // 5rk1/1Q3pp1/6np/p2pB3/3P4/P1n5/2P3PP/4R1K1 w - a6 0 23
-// До сортування - 
-// Після сортування - 
+// До сортування - 105s
+// Після сортування - 29s
+// Після зміни Move з class на struct - s
 class Program
 {
     static void Main()

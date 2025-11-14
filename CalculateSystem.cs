@@ -28,36 +28,27 @@ static public class CalculateSystem
             return;
         }
 
-        for (int i = 0; i < 8; i++)
-        {
-            for (int j = 0; j < 8; j++)
-            {
-                var figure = board.GetFigureAt((char)('h' - j), 8 - i);
-                if (figure == null)
-                    continue;
-                if (figure.IsWhite != board.IsWhiteTurn)
-                    continue;
-                var possibleMoves = figure.GetPossibleMoves(board);
-                foreach (var move in possibleMoves)
-                {
-                    ChessBoard boardCopy = new(board);
-                    var figureCopy = boardCopy.GetFigureAt(figure.PositionLetter, figure.PositionNumber);
-                    var kingCopy = board.IsWhiteTurn ? boardCopy.GetWhiteKing() : boardCopy.GetBlackKing();
-                    figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
-                    if (kingCopy.IsChecking(boardCopy))
-                        continue;
+        List<Move> allMoves = GenerateLegalMoves(board);
 
-                    float result = -FindBestScore(boardCopy, depth-1, -beta, -bestResult);
-                    if (result > bestResult)
-                    {
-                        bestResult = result;
-                        bestFigure = board.GetFigureAt((char)('h' - j), 8 - i);
-                        from = (bestFigure.PositionLetter, bestFigure.PositionNumber);
-                        to = move.To;
-                    }
-                }                    
+        foreach (var move in allMoves)
+        {
+            ChessBoard boardCopy = new(board);
+            var figureCopy = boardCopy.GetFigureAt(move.From.Item1, move.From.Item2);
+            var kingCopy = board.IsWhiteTurn ? boardCopy.GetWhiteKing() : boardCopy.GetBlackKing();
+            figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
+            if (kingCopy.IsChecking(boardCopy))
+                continue;
+            if (move.CapturedFigure is King)
+                continue;
+            float result = -FindBestScore(boardCopy, depth-1, -beta, -bestResult);
+            if (result > bestResult)
+            {
+                bestResult = result;
+                bestFigure = board.GetFigureAt(move.From.Item1, move.From.Item2);
+                from = (bestFigure.PositionLetter, bestFigure.PositionNumber);
+                to = move.To;
             }
-        }
+        }     
         PrintResult(bestFigure, from, to, depth);
 
         Console.WriteLine("Оновити позицію?");
@@ -110,64 +101,58 @@ static public class CalculateSystem
             return float.MinValue;
         }
         
+        List<Move> allMoves = GenerateLegalMoves(board);
+        foreach (var move in allMoves)
+        {
+            ChessBoard boardCopy = new(board);
+            var figureCopy = boardCopy.GetFigureAt(move.From.Item1, move.From.Item2);
+            var kingCopy = board.IsWhiteTurn ? boardCopy.GetWhiteKing() : boardCopy.GetBlackKing();
+            figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
+
+            if (kingCopy.IsChecking(boardCopy))
+                continue;
+            if (move.CapturedFigure is King)
+                continue;
+            float score = -FindBestScore(boardCopy, depth - 1, -beta, -alpha);
+
+            if (score >= beta)
+                return beta;
+
+            if (score > alpha)
+                alpha = score;
+        }
+        return alpha;
+    }
+
+    static List<Move> GenerateLegalMoves(ChessBoard board)
+    {
+        var moves = new List<Move>();
         for (int i = 0; i < 8; i++)
         {
             for (int j = 0; j < 8; j++)
             {
                 var figure = board.GetFigureAt((char)('h' - j), 8 - i);
-                if (figure == null)
+                if (figure == null || figure.IsWhite != board.IsWhiteTurn)
                     continue;
-                if (figure.IsWhite != board.IsWhiteTurn)
-                    continue;
+
                 var possibleMoves = figure.GetPossibleMoves(board);
                 foreach (var move in possibleMoves)
                 {
                     ChessBoard boardCopy = new(board);
-                    var figureCopy = boardCopy.GetFigureAt(figure.PositionLetter, figure.PositionNumber);
+                    var figureCopy = boardCopy.GetFigureAt(move.From.Item1, move.From.Item2);
                     var kingCopy = board.IsWhiteTurn ? boardCopy.GetWhiteKing() : boardCopy.GetBlackKing();
                     figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
-
-                    if (kingCopy.IsChecking(boardCopy))
-                        continue;
-                    float score = -FindBestScore(boardCopy, depth - 1, -beta, -alpha);
-
-                    if (score >= beta)
-                        return beta;
-
-                    if (score > alpha)
-                        alpha = score;
+                    if (!kingCopy.IsChecking(boardCopy))
+                    {
+                        var captured = board.GetFigureAt(move.To.Item1, move.To.Item2);
+                        if (captured is King)
+                            continue;
+                        moves.Add(move);
+                    }
                 }
             }
         }
-        return alpha;
+        moves.Sort((a, b) => b.Score.CompareTo(a.Score));
+        return moves;
     }
-
-    //static List<Move> GenerateLegalMoves(ChessBoard board)
-    //{
-    //    var moves = new List<Move>();
-    //    for (int i = 0; i < 8; i++)
-    //    {
-    //        for (int j = 0; j < 8; j++)
-    //        {
-    //            var figure = board.GetFigureAt((char)('h' - j), 8 - i);
-    //            if (figure == null || figure.IsWhite != board.IsWhiteTurn)
-    //                continue;
-
-    //            var possibleMoves = figure.GetPossibleMoves(board);
-    //            foreach (var move in possibleMoves)
-    //            {
-    //                ChessBoard boardCopy = new(board);
-    //                var figureCopy = boardCopy.GetFigureAt(figure.PositionLetter, figure.PositionNumber);
-    //                var kingCopy = board.IsWhiteTurn ? boardCopy.GetWhiteKing() : boardCopy.GetBlackKing();
-    //                figureCopy.Move(move.Item1, move.Item2, boardCopy);
-    //                if (!kingCopy.IsChecking(boardCopy))
-    //                {
-    //                    var captured = board.GetFigureAt(move.Item1, move.Item2);
-    //                    moves.Add(new Move(figure, (figure.PositionLetter, figure.PositionNumber), move, captured));
-    //                }
-    //            }
-    //        }
-    //    }
-    //    return moves;
-    //}
 }

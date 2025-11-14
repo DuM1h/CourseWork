@@ -2,7 +2,7 @@
 
 namespace CourseWork;
 
-public class Move
+public struct Move
 {
     public Figure FigureToMove { get; private set; }
     public (char, int) From { get; private set; }
