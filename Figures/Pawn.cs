@@ -15,10 +15,10 @@ public class Pawn : Figure
         {
             if (PositionNumber + direction == promotionRank)
             {
-                moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), true, FigureType.Queen));
-                moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), true, FigureType.Rook));
-                moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), true, FigureType.Bishop));
-                moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), true, FigureType.Knight));
+                moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), FigureType.Null, FigureType.Queen));
+                moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), FigureType.Null, FigureType.Rook));
+                moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), FigureType.Null, FigureType.Bishop));
+                moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), FigureType.Null, FigureType.Knight));
             }
             else
                 moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + 1 * direction)));
@@ -38,8 +38,16 @@ public class Pawn : Figure
 
             var target = board.GetFigureAt(newLetter, newNumber);
             if (target != null && (target.IsWhite != IsWhite || includeAllies))
-                moves.Add(new Move(this.Type, Position, newPos, target.Type));
-
+            {
+                if (newNumber == promotionRank)
+                {
+                    moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), target.Type, FigureType.Queen));
+                    moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), target.Type, FigureType.Rook));
+                    moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), target.Type, FigureType.Bishop));
+                    moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), target.Type, FigureType.Knight));
+                } else
+                    moves.Add(new Move(this.Type, Position, newPos, target.Type));
+            }
             if (board.EnPassantAvailable && board.EnPassantTarget == (newLetter, newNumber))
             {
                 moves.Add(new Move(this.Type, Position, newPos, board.EnPassantTarget));

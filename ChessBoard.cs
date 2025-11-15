@@ -121,13 +121,14 @@ public class ChessBoard
             int dir = move.EnPassantTargetPos.Item2 == 6 ? 1 : -1;
             var pawn = board[EnPassantNumber + dir, EnPassantLetter];
             enPassantCapturedPawn = new Pawn(pawn.PositionLetter, pawn.PositionNumber, pawn.IsWhite, pawn.Value);
-            board[EnPassantLetter, EnPassantNumber+dir] = null;
+            board[EnPassantNumber + dir, EnPassantLetter] = null;
         }
 
         if (figure is Pawn && Math.Abs(move.To.Item2 - move.From.Item2) == 2)
         {
+            int direction = figure.IsWhite ? 1 : -1;
             EnPassantAvailable = true;
-            EnPassantTarget = (move.To.Item1, move.To.Item2 - 1);
+            EnPassantTarget = (move.To.Item1, move.To.Item2 - direction);
         }
         else
         {
@@ -254,7 +255,7 @@ public class ChessBoard
         if (fenParts[3] != "-")
         {
             EnPassantAvailable = true;
-            int num = fenParts[3][1]-'0';
+            int num = fenParts[3][1]-'a';
             EnPassantTarget = (fenParts[3][0], num);
         }
         else
@@ -454,7 +455,7 @@ public class ChessBoard
         if (EnPassantAvailable)
         {
             char letter = EnPassantTarget.Item1;
-            char num = (char)(EnPassantTarget.Item2+'0');
+            char num = (char)(EnPassantTarget.Item2+'a');
             fenParts[3] = letter.ToString() + num.ToString();
         }
         else

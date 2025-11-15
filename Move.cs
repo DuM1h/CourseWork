@@ -42,16 +42,16 @@ public struct Move
         IsPromoting = false;
     }
 
-    public Move(FigureType figureToMove, (char, int) from, (char, int) to, bool isPromoting, FigureType type)
+    public Move(FigureType figureToMove, (char, int) from, (char, int) to, FigureType capturedFigure, FigureType type)
     {
         FigureToMove = figureToMove;
         From = from;
         To = to;
-        CapturedFigure = FigureType.Null;
+        CapturedFigure = capturedFigure;
         Score = -10;
         IsCastling = false;
         IsEnPassant = false;
-        IsPromoting = isPromoting;
+        IsPromoting = true;
         PromotingType = type;
     }
 
@@ -66,5 +66,19 @@ public struct Move
         IsCastling = false;
         EnPassantTargetPos = enPassantPos;
         IsPromoting = false;
+    }
+
+    public char GetSymbol(Figure fig)
+    {
+        switch (PromotingType)
+        {
+            case (FigureType.King): return fig.IsWhite ? '♔' : '♚';
+            case (FigureType.Queen): return fig.IsWhite ? '♕' : '♛';
+            case (FigureType.Rook): return fig.IsWhite ? '♖' : '♜';
+            case (FigureType.Bishop): return fig.IsWhite ? '♗' : '♝';
+            case (FigureType.Knight): return fig.IsWhite ? '♘' : '♞';
+            case (FigureType.Pawn): return fig.IsWhite ? '♙' : '♟';
+        }
+        return ' ';
     }
 }     

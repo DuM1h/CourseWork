@@ -43,7 +43,7 @@ public abstract class Figure
                 case (FigureType.Bishop): return IsWhite ? '♗' : '♝';
                 case (FigureType.Knight): return IsWhite ? '♘' : '♞';
                 case (FigureType.Pawn): return IsWhite ? '♙' : '♟';
-          }
+            }
             return ' ';
         }
     }
@@ -72,6 +72,7 @@ public abstract class Figure
         board.SetFigureAt(this, move);
         PositionNumber = move.To.Item2;
         PositionLetter = move.To.Item1;
+        Position = (PositionLetter, PositionNumber);
     }
 
     public void Unmove(ChessBoard board, Move move, Figure target)

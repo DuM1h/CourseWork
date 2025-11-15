@@ -76,7 +76,11 @@ static public class CalculateSystem
         if (bestFigure != null)
         {
             Console.WriteLine("Найкращий хід:");
-            Console.WriteLine($"{bestFigure.Symbol} з {move.From.Item1}{move.From.Item2} на {move.To.Item1}{move.To.Item2}");
+            Console.Write($"{bestFigure.Symbol} з {move.From.Item1}{move.From.Item2} на {move.To.Item1}{move.To.Item2}");
+            if (move.IsPromoting)
+            {
+                Console.Write($" з перетворенням на {move.GetSymbol(bestFigure)}\n");
+            }
         }
         else
         {
