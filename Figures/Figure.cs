@@ -80,89 +80,147 @@ public abstract class Figure
         PositionNumber = move.From.Item2;
         board.Unmove(this, move, target);
     }
-
-    public bool IsAttacking(ChessBoard chessBoard)
+    public void FindAttackers(ChessBoard board)
     {
-        bool isAttacked = false;
         AttackingFigures = new List<Figure>();
-        Figure[,] opponentsFigures;
-        (char, int) pos = (this.PositionLetter, this.PositionNumber);
-        if (this.IsWhite)
-            opponentsFigures = chessBoard.GetBlackFigures();
-        else
-            opponentsFigures = chessBoard.GetWhiteFigures();
-        foreach (Figure figure in opponentsFigures)
+        ProtectingFigures = new List<Figure>();
+        
+        bool isAttacked = false;
+        bool isProtected = false;
+
+        char attackingPosLetter;
+        int attackingPosNumber;
+
+        int[] dx = { -2, -1, 1, 2 };
+        int[] dy = { -2, -1, 1, 2 };
+        int dir = IsWhite ? 1 : -1;
+
+        foreach (var x in dx)
         {
-            if (figure == null) continue;
-            foreach (Move move in figure.GetPossibleMoves(chessBoard))
+            foreach (var y in dy)
             {
-                if (figure is Pawn)
+                if (Math.Abs(x) != Math.Abs(y))
                 {
-                    if (Math.Abs((char)(this.PositionLetter - figure.PositionLetter)) == 1)
+                    attackingPosLetter = (char)(PositionLetter + x);
+                    attackingPosNumber = PositionNumber + y;
+                    if (attackingPosLetter >= 'a' && attackingPosLetter <= 'h' && attackingPosNumber >= 1 && attackingPosNumber <= 8)
                     {
-                        if (move.To == pos)
+                        var target = board.GetFigureAt(attackingPosLetter, attackingPosNumber);
+                        if (target != null && target.Type == FigureType.Knight)
                         {
-                            isAttacked = true;
-                            this.AttackingFigures.Add(figure);
+                            if (target.IsWhite != this.IsWhite)
+                            {
+                                isAttacked = true;
+                                AttackingFigures.Add(target);
+                            } else
+                            {
+                                isProtected = true;
+                                ProtectingFigures.Add(target);
+                            }
                         }
                     }
                 }
-                else if (figure is King && this is King)
+            }
+        }
+
+        dx = new int[] { -1, 1 };
+        foreach (var x in dx)
+        {
+            attackingPosLetter = (char)(PositionLetter + x);
+            attackingPosNumber = PositionNumber + dir;
+            if (attackingPosLetter >= 'a' && attackingPosLetter <= 'h' && attackingPosNumber >= 1 && attackingPosNumber <= 8)
+            {
+                var target = board.GetFigureAt(attackingPosLetter, attackingPosNumber);
+                if (target != null && target.Type == FigureType.Pawn)
                 {
-                    continue;
-                }
-                else
-                {
-                    if (move.To == Position)
+                    if (target.IsWhite != this.IsWhite)
                     {
                         isAttacked = true;
-                        this.AttackingFigures.Add(figure);
+                        AttackingFigures.Add(target);
+                    } else
+                    {
+                        isProtected = true;
+                        ProtectingFigures.Add(target);
                     }
                 }
             }
         }
-        return isAttacked;
-    }
 
-    public bool IsProtected(ChessBoard chessBoard)
-    {
-        bool isProtected = false;
-        ProtectingFigures = new List<Figure>();
-        Figure[,] opponentsFigures;
-        if (this.IsWhite)
-            opponentsFigures = chessBoard.GetWhiteFigures();
-        else
-            opponentsFigures = chessBoard.GetBlackFigures();
-        foreach (Figure figure in opponentsFigures)
+        dx = new int[] { -1, 0, 1 };
+        dy = new int[] { -1, 0, 1 };
+        foreach (var x in dx)
         {
-            if (figure == null) continue;
-            foreach (var move in figure.GetPossibleMoves(chessBoard, true))
+            foreach (var y in dy)
             {
-                if (figure is Pawn)
+                if (x == 0 && y == 0)
+                    continue;
+                attackingPosLetter = (char)(PositionLetter + x);
+                attackingPosNumber = PositionNumber + y;
+                if (attackingPosLetter >= 'a' && attackingPosLetter <= 'h' && attackingPosNumber >= 1 && attackingPosNumber <= 8)
                 {
-                    if (Math.Abs((char)(this.PositionLetter - figure.PositionLetter)) == 1)
+                    var target = board.GetFigureAt(attackingPosLetter, attackingPosNumber);
+                    if (target != null && target.Type == FigureType.King)
                     {
-                        if (move.To == Position)
+                        if (target.IsWhite != this.IsWhite)
+                        {
+                            isAttacked = true;
+                            AttackingFigures.Add(target);
+                        } else
                         {
                             isProtected = true;
-                            this.ProtectingFigures.Add(figure);
+                            ProtectingFigures.Add(target);
                         }
                     }
                 }
-                else if (figure is King && this is King)
-                {
+            }
+        }
+
+
+        foreach (var x in dx)
+        {
+            foreach (var y in dy)
+            {
+                if (x == 0 && y == 0)
                     continue;
-                }
-                else
+                bool isDiagonal = (x != 0 && y != 0);
+                attackingPosLetter = (char)(PositionLetter + x);
+                attackingPosNumber = PositionNumber + y;
+                while (attackingPosLetter >= 'a' && attackingPosLetter <= 'h' && attackingPosNumber >= 1 && attackingPosNumber <= 8)
                 {
-                    if (move.To == Position)
+                    var target = board.GetFigureAt(attackingPosLetter, attackingPosNumber);
+                    if (target == null)
                     {
-                        isProtected = true;
-                        this.ProtectingFigures.Add(figure);
+                        attackingPosLetter = (char)(attackingPosLetter + x);
+                        attackingPosNumber = attackingPosNumber + y;
+                        continue;
                     }
+                    if (isDiagonal && (target.Type == FigureType.Bishop || target.Type == FigureType.Queen))
+                    {
+                        if (target.IsWhite != this.IsWhite)
+                        {
+                            isAttacked = true;
+                            AttackingFigures.Add(target);
+                        } else
+                        {
+                            isProtected = true;
+                            ProtectingFigures.Add(target);
+                        }
+                    }
+                    if (!isDiagonal && (target.Type == FigureType.Rook || target.Type == FigureType.Queen))
+                    {
+                        if (target.IsWhite != this.IsWhite)
+                        {
+                            isAttacked = true;
+                            AttackingFigures.Add(target);
+                        } else
+                        {
+                            isProtected = true;
+                            ProtectingFigures.Add(target);
+                        }
+                    }
+                    break;
                 }
             }
         }
-        return isProtected;
     }
 }

@@ -45,8 +45,9 @@ static public class BoardEvaluator
                 else
                     opponentCoefficient += centerBonus;
 
-                if ((fig.IsAttacking(board) && !fig.IsProtected(board)) ||
-                    (fig.IsAttacking(board) && fig.IsProtected(board) && (fig.ProtectingFigures.Count < fig.AttackingFigures.Count)))
+                fig.FindAttackers(board);
+                if ((fig.AttackingFigures.Count>0 && fig.ProtectingFigures.Count==0) ||
+                    (fig.AttackingFigures.Count>0 && fig.ProtectingFigures.Count>0 && (fig.ProtectingFigures.Count < fig.AttackingFigures.Count)))
                 {
                     if (isMyFigure)
                         coefficient -= GetHangingPiecePenalty(fig);
