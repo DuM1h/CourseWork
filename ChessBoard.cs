@@ -134,6 +134,26 @@ public class ChessBoard
             EnPassantAvailable = false;
             EnPassantTarget = ('-', 0);
         }
+
+        int end = IsWhiteTurn ? 8 : 1;
+        if (move.IsPromotion && move.To.Item2 == end)
+        {
+            switch (PawnPromotion(figure))
+            {
+                case FigureType.Queen:
+                    board[toRow, toCol] = new Queen(figure.PositionLetter, figure.PositionNumber, figure.IsWhite, 9);
+                    break;
+                case FigureType.Rook:
+                    board[toRow, toCol] = new Rook(figure.PositionLetter, figure.PositionNumber, figure.IsWhite, 5);
+                    break;
+                case FigureType.Bishop:
+                    board[toRow, toCol] = new Bishop(figure.PositionLetter, figure.PositionNumber, figure.IsWhite, 3);
+                    break;
+                case FigureType.Knight:
+                    board[toRow, toCol] = new Knight(figure.PositionLetter, figure.PositionNumber, figure.IsWhite, 3);
+                    break;
+            }
+        }
         SwitchTurn();
         previousFullmoveNumber = FullmoveNumber;
         if (!IsWhiteTurn)
@@ -203,6 +223,49 @@ public class ChessBoard
         UpdateFen();
     }
 
+    private FigureType PawnPromotion(Figure pawn)
+    {
+        ChessBoard boardCopy = new(this);
+        int row = 8 - pawn.PositionNumber;
+        int col = pawn.PositionLetter - 'a';
+
+        float maxAdvantage = BoardEvaluator.CalсulateAdvantage(this);
+        float newAdvantage;
+        FigureType bestType = FigureType.Null;
+
+        boardCopy.board[row, col] = new Queen(pawn.PositionLetter, pawn.PositionNumber, pawn.IsWhite, 9);
+        newAdvantage = BoardEvaluator.CalсulateAdvantage(boardCopy);
+        if (newAdvantage > maxAdvantage)
+        {
+            maxAdvantage = newAdvantage;
+            bestType = FigureType.Queen;
+        }
+
+        boardCopy.board[row, col] = new Rook(pawn.PositionLetter, pawn.PositionNumber, pawn.IsWhite, 5);
+        newAdvantage = BoardEvaluator.CalсulateAdvantage(boardCopy);
+        if (newAdvantage > maxAdvantage)
+        {
+            maxAdvantage = newAdvantage;
+            bestType = FigureType.Rook;
+        }
+
+        boardCopy.board[row, col] = new Bishop(pawn.PositionLetter, pawn.PositionNumber, pawn.IsWhite, 3);
+        newAdvantage = BoardEvaluator.CalсulateAdvantage(boardCopy);
+        if (newAdvantage > maxAdvantage)
+        {
+            maxAdvantage = newAdvantage;
+            bestType = FigureType.Bishop;
+        }
+
+        boardCopy.board[row, col] = new Knight(pawn.PositionLetter, pawn.PositionNumber, pawn.IsWhite, 3);
+        newAdvantage = BoardEvaluator.CalсulateAdvantage(boardCopy);
+        if (newAdvantage > maxAdvantage)
+        {
+            maxAdvantage = newAdvantage;
+            bestType = FigureType.Knight;
+        }
+        return bestType;
+    }
     private void InitializeBoard()
     {
         // Ініціалізація шахівниці на основі FEN-нотації

@@ -13,6 +13,7 @@ public struct Move
     public FigureType CapturedFigure { get; private set; }
     public int Score { get; set; }
 
+    public bool IsPromotion { get; private set; }
     public bool IsCastling { get; private set; }
     public bool IsEnPassant { get; private set; }
     public (char, int) EnPassantTargetPos { get; private set; }
@@ -34,7 +35,20 @@ public struct Move
         To = to;
         CapturedFigure = FigureType.Null;
         Score = -10;
-        IsCastling = isCastling;
+        if (figureToMove == FigureType.King)
+        {
+            IsPromotion = false;
+            IsCastling = isCastling;
+        }
+        else if (figureToMove == FigureType.Pawn)
+        {
+            IsPromotion = isCastling;
+            IsCastling = false;
+        } else
+        {
+            IsPromotion = false;
+            IsCastling = false;
+        }
         IsEnPassant = false;
     }
 

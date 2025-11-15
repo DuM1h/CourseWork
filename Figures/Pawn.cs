@@ -14,7 +14,7 @@ public class Pawn : Figure
             moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber+1*direction)));
 
         if ((IsWhite && PositionNumber == 2 || !IsWhite && PositionNumber == 7) &&
-            board.GetFigureAt(PositionLetter, PositionNumber + 2 * direction) == null)
+            board.GetFigureAt(PositionLetter, PositionNumber + 2 * direction) == null && nextPosition == null)
             moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber+2*direction)));
 
         foreach (var dx in new[] { -1, 1 })
