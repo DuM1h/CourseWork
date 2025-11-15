@@ -116,9 +116,10 @@ public class ChessBoard
 
         if (move.IsEnPassant)
         {
-            int EnPassantLetter = move.EnPassantTargetPos.Item1 - '0';
+            int EnPassantLetter = move.EnPassantTargetPos.Item1 - 'a';
             int EnPassantNumber = 8 - move.EnPassantTargetPos.Item2;
-            enPassantCapturedPawn = board[EnPassantLetter, EnPassantNumber];
+            var pawn = board[EnPassantLetter, EnPassantNumber];
+            enPassantCapturedPawn = new Pawn(pawn.PositionLetter, pawn.PositionNumber, pawn.IsWhite, pawn.Value);
             board[EnPassantLetter, EnPassantNumber] = null;
         }
 

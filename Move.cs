@@ -38,12 +38,12 @@ public struct Move
         IsEnPassant = false;
     }
 
-    public Move(FigureType figureToMove, (char, int) from, (char, int) to, FigureType capturedFigure, (char, int) enPassantPos)
+    public Move(FigureType figureToMove, (char, int) from, (char, int) to, (char, int) enPassantPos)
     {
         FigureToMove = figureToMove;
         From = from;
         To = to;
-        CapturedFigure = capturedFigure;
+        CapturedFigure = FigureType.Null;
         Score = 0;
         IsEnPassant = true;
         IsCastling = false;

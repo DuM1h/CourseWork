@@ -31,7 +31,7 @@ public class Pawn : Figure
 
             if (board.EnPassantAvailable && board.EnPassantTarget.Item1 == PositionLetter)
             {
-                moves.Add(new Move(this.Type, Position, newPos, target.Type, board.EnPassantTarget));
+                moves.Add(new Move(this.Type, Position, newPos, board.EnPassantTarget));
             }
         }
 
