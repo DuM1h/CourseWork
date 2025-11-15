@@ -13,7 +13,8 @@ public struct Move
     public FigureType CapturedFigure { get; private set; }
     public int Score { get; set; }
 
-    public bool IsPromotion { get; private set; }
+    public bool IsPromoting { get; private set; }
+    public FigureType PromotingType { get; private set; }
     public bool IsCastling { get; private set; }
     public bool IsEnPassant { get; private set; }
     public (char, int) EnPassantTargetPos { get; private set; }
@@ -26,6 +27,7 @@ public struct Move
         Score = 0;
         IsEnPassant = false;
         IsCastling = false;
+        IsPromoting = false;
     }
 
     public Move(FigureType figureToMove, (char, int) from, (char, int) to, bool isCastling = false)
@@ -35,21 +37,22 @@ public struct Move
         To = to;
         CapturedFigure = FigureType.Null;
         Score = -10;
-        if (figureToMove == FigureType.King)
-        {
-            IsPromotion = false;
-            IsCastling = isCastling;
-        }
-        else if (figureToMove == FigureType.Pawn)
-        {
-            IsPromotion = isCastling;
-            IsCastling = false;
-        } else
-        {
-            IsPromotion = false;
-            IsCastling = false;
-        }
+        IsCastling = isCastling;
         IsEnPassant = false;
+        IsPromoting = false;
+    }
+
+    public Move(FigureType figureToMove, (char, int) from, (char, int) to, bool isPromoting, FigureType type)
+    {
+        FigureToMove = figureToMove;
+        From = from;
+        To = to;
+        CapturedFigure = FigureType.Null;
+        Score = -10;
+        IsCastling = false;
+        IsEnPassant = false;
+        IsPromoting = isPromoting;
+        PromotingType = type;
     }
 
     public Move(FigureType figureToMove, (char, int) from, (char, int) to, (char, int) enPassantPos)
@@ -62,5 +65,6 @@ public struct Move
         IsEnPassant = true;
         IsCastling = false;
         EnPassantTargetPos = enPassantPos;
+        IsPromoting = false;
     }
 }     

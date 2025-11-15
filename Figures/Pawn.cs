@@ -10,9 +10,20 @@ public class Pawn : Figure
         var moves = new List<Move>();
         int direction = IsWhite ? 1 : -1;
         var nextPosition = board.GetFigureAt(PositionLetter, PositionNumber + direction);
+        int promotionRank = IsWhite ? 8 : 1;
         if (nextPosition == null)
-            moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber+1*direction)));
-
+        {
+            if (PositionNumber + direction == promotionRank)
+            {
+                moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), true, FigureType.Queen));
+                moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), true, FigureType.Rook));
+                moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), true, FigureType.Bishop));
+                moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), true, FigureType.Knight));
+            }
+            else
+                moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + 1 * direction)));
+        }
+        
         if ((IsWhite && PositionNumber == 2 || !IsWhite && PositionNumber == 7) &&
             board.GetFigureAt(PositionLetter, PositionNumber + 2 * direction) == null && nextPosition == null)
             moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber+2*direction)));
