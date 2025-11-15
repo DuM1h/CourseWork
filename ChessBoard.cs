@@ -20,6 +20,10 @@ public class ChessBoard
     private bool previousEnPassantAvailable;
     private char[] previousEnPassantTarget = new char[2];
     private int previousFullmoveNumber;
+    private bool previousCanWhiteCastleKingside;
+    private bool previousCanWhiteCastleQueenside;
+    private bool previousCanBlackCastleKingside;
+    private bool previousCanBlackCastleQueenside;
 
 
     public ChessBoard(string fen)
@@ -39,6 +43,10 @@ public class ChessBoard
         board[toRow, toCol] = figure;
         board[fromRow, fromCol] = null;
 
+        previousCanBlackCastleKingside = CanBlackCastleKingside;
+        previousCanBlackCastleQueenside = CanBlackCastleQueenside;
+        previousCanWhiteCastleKingside = CanWhiteCastleKingside;
+        previousCanWhiteCastleQueenside = CanWhiteCastleQueenside;
         if (figure is King)
         {
             if (figure.IsWhite)
@@ -134,6 +142,10 @@ public class ChessBoard
         board[toRow, toCol] = figure;
         board[fromRow, fromCol] = target;
 
+        CanBlackCastleKingside = previousCanBlackCastleKingside;
+        CanBlackCastleQueenside = previousCanBlackCastleQueenside;
+        CanWhiteCastleKingside = previousCanWhiteCastleKingside;
+        CanWhiteCastleQueenside = previousCanWhiteCastleQueenside;
         HalfmoveClock = previousHalfmoveClockValue;
         FullmoveNumber = previousFullmoveNumber;
         EnPassantAvailable = previousEnPassantAvailable;

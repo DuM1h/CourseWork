@@ -5,6 +5,7 @@ namespace CourseWork;
 // До сортування - 105s
 // Після сортування - 29s
 // Після зміни Move з class на struct (+правки) - 14s
+// Додав метод Unmove() та допрацював оцінку ходів - 6s
 class Program
 {
     static void Main()
