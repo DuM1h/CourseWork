@@ -20,18 +20,18 @@ static public class CalculateSystem
 
         King blackKing = board.GetBlackKing();
         King whiteKing = board.GetWhiteKing();
-        if (blackKing.IsMated(board))
-        {
-            Console.WriteLine("Білі перемогли");
-            return;
-        }
-        if (whiteKing.IsMated(board))
-        {
-            Console.WriteLine("Чорні перемогли");
-            return;
-        }
 
         List<Move> allMoves = GenerateLegalMoves(board);
+        if (allMoves.Count == 0)
+        {
+            King kingToMove = board.IsWhiteTurn ? board.GetWhiteKing() : board.GetBlackKing();
+            string color = !board.IsWhiteTurn ? "Білі" : "Чорні";
+            if (kingToMove.IsChecking(board))
+                Console.WriteLine(color+" перемогли");
+            else
+                Console.WriteLine("Нічия - пат");
+        }
+
         ScoreMoves(allMoves, depth);
         allMoves.Sort((a, b) => b.Score.CompareTo(a.Score));
 

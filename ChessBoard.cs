@@ -118,10 +118,10 @@ public class ChessBoard
         {
             int EnPassantLetter = move.EnPassantTargetPos.Item1 - 'a';
             int EnPassantNumber = 8 - move.EnPassantTargetPos.Item2;
-            int dir = move.EnPassantTargetPos.Item2 == 6 ? -1 : 1;
+            int dir = move.EnPassantTargetPos.Item2 == 6 ? 1 : -1;
             var pawn = board[EnPassantLetter, EnPassantNumber+dir];
             enPassantCapturedPawn = new Pawn(pawn.PositionLetter, pawn.PositionNumber, pawn.IsWhite, pawn.Value);
-            board[EnPassantLetter, EnPassantNumber] = null;
+            board[EnPassantLetter, EnPassantNumber+dir] = null;
         }
 
         if (figure is Pawn && Math.Abs(move.To.Item2 - move.From.Item2) == 2)
@@ -156,7 +156,8 @@ public class ChessBoard
         {
             int EnPassantLetter = move.EnPassantTargetPos.Item1 - 'a';
             int EnPassantNumber = 8 - move.EnPassantTargetPos.Item2;
-            board[EnPassantLetter, EnPassantNumber] = enPassantCapturedPawn;
+            int dir = move.EnPassantTargetPos.Item2 == 6 ? 1 : -1;
+            board[EnPassantLetter, EnPassantNumber+dir] = enPassantCapturedPawn;
         }
 
         if (move.IsCastling)

@@ -13,36 +13,26 @@ public class King : Figure
         int[] dx = { -1, 0, 1 };
         int[] dy = { -1, 0, 1 };
 
-        ChessBoard boardCopy;
         foreach (var x in dx)
         {
             foreach (var y in dy)
             {
-                boardCopy = new ChessBoard(board);
-                King kingCopy = new King(PositionLetter, PositionNumber, IsWhite);
                 if (x == 0 && y == 0) continue;
                 char newLetter = (char)(PositionLetter + x);
                 int newNumber = PositionNumber + y;
                 if (newLetter >= 'a' && newLetter <= 'h' && newNumber >= 1 && newNumber <= 8)
                 {
                     var target = board.GetFigureAt(newLetter, newNumber);
-                    if (target == null || (target != null && (target.IsWhite != IsWhite || includeAllies)))
-                    {
-                        
-                        if (!kingCopy.IsChecking(boardCopy))
-                            moves.Add(new Move(this.Type, Position, (newLetter, newNumber)));
-                    }
-                    if (target != null && (target.IsWhite != IsWhite || includeAllies))
-                    {
-                        kingCopy.Move(new Move(this.Type, Position, (newLetter, newNumber)), boardCopy);
-                        if (!kingCopy.IsChecking(boardCopy))
-                            moves.Add(new Move(this.Type, Position, (newLetter, newNumber), target.Type));
-                    }
+                    if (target == null)
+                        moves.Add(new Move(this.Type, Position, (newLetter, newNumber)));
+                    else if (target.IsWhite != IsWhite || includeAllies)
+                        moves.Add(new Move(this.Type, Position, (newLetter, newNumber), target.Type));
                 }
             }
         }
         int[] kdx = {0, 1, 2};
         int[] qdx = {0, -1, -2};
+        ChessBoard boardCopy = new ChessBoard(board);
         switch (IsWhite)
         {
             case true:
