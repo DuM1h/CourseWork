@@ -153,7 +153,7 @@ public class ChessBoard
 
         if (move.IsEnPassant)
         {
-            int EnPassantLetter = move.EnPassantTargetPos.Item1 - '0';
+            int EnPassantLetter = move.EnPassantTargetPos.Item1 - 'a';
             int EnPassantNumber = 8 - move.EnPassantTargetPos.Item2;
             board[EnPassantLetter, EnPassantNumber] = enPassantCapturedPawn;
         }

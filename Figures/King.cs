@@ -28,13 +28,13 @@ public class King : Figure
                     var target = board.GetFigureAt(newLetter, newNumber);
                     if (target == null || (target != null && (target.IsWhite != IsWhite || includeAllies)))
                     {
-                        boardCopy.SetFigureAt(kingCopy, new Move(this.Type, Position, (newLetter, newNumber)));
+                        
                         if (!kingCopy.IsChecking(boardCopy))
                             moves.Add(new Move(this.Type, Position, (newLetter, newNumber)));
                     }
                     if (target != null && (target.IsWhite != IsWhite || includeAllies))
                     {
-                        boardCopy.SetFigureAt(kingCopy, new Move(this.Type, Position, (newLetter, newNumber)));
+                        kingCopy.Move(new Move(this.Type, Position, (newLetter, newNumber)), boardCopy);
                         if (!kingCopy.IsChecking(boardCopy))
                             moves.Add(new Move(this.Type, Position, (newLetter, newNumber), target.Type));
                     }
@@ -56,7 +56,7 @@ public class King : Figure
                         boardCopy = new ChessBoard(board);
                         King kingCopy = new King(PositionLetter, PositionNumber, IsWhite);
                         char newLetter = (char)(PositionLetter + k);
-                        boardCopy.SetFigureAt(kingCopy, new Move(this.Type, Position, (newLetter, PositionNumber)));
+                        kingCopy.Move(new Move(this.Type, Position, (newLetter, PositionNumber)), boardCopy);
                         if (kingCopy.IsChecking(boardCopy))
                             break;
                         if (k == 2)
@@ -73,7 +73,7 @@ public class King : Figure
                         boardCopy = new ChessBoard(board);
                         King kingCopy = new King(PositionLetter, PositionNumber, IsWhite);
                         char newLetter = (char)(PositionLetter + q);
-                        boardCopy.SetFigureAt(kingCopy, new Move(this.Type, Position, (newLetter, PositionNumber)));
+                        kingCopy.Move(new Move(this.Type, Position, (newLetter, PositionNumber)), boardCopy);
                         if (kingCopy.IsChecking(boardCopy))
                             break;
                         if (q == -2)
@@ -92,7 +92,7 @@ public class King : Figure
                     boardCopy = new ChessBoard(board);
                     King kingCopy = new King(PositionLetter, PositionNumber, IsWhite);
                     char newLetter = (char)(PositionLetter + k);
-                    boardCopy.SetFigureAt(kingCopy, new Move(this.Type, Position, (newLetter, PositionNumber)));
+                    kingCopy.Move(new Move(this.Type, Position, (newLetter, PositionNumber)), boardCopy);
                     if (kingCopy.IsChecking(boardCopy))
                         break;
                     if (k == 2)
@@ -109,7 +109,7 @@ public class King : Figure
                     boardCopy = new ChessBoard(board);
                     King kingCopy = new King(PositionLetter, PositionNumber, IsWhite);
                     char newLetter = (char)(PositionLetter + q);
-                    boardCopy.SetFigureAt(kingCopy, new Move(this.Type, Position, (newLetter, PositionNumber)));
+                    kingCopy.Move(new Move(this.Type, Position, (newLetter, PositionNumber)), boardCopy);
                     if (kingCopy.IsChecking(boardCopy))
                         break;
                     if (q == -2)

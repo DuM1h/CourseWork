@@ -29,7 +29,7 @@ public class Pawn : Figure
             if (target != null && (target.IsWhite != IsWhite || includeAllies))
                 moves.Add(new Move(this.Type, Position, newPos, target.Type));
 
-            if (board.EnPassantAvailable && board.EnPassantTarget.Item1 == PositionLetter)
+            if (board.EnPassantAvailable && board.EnPassantTarget == (newLetter, newNumber))
             {
                 moves.Add(new Move(this.Type, Position, newPos, board.EnPassantTarget));
             }
