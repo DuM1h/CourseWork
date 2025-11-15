@@ -12,6 +12,10 @@ public struct Move
     public int ToIndex => 8 * (8 - To.Item2) + ('h' - To.Item1);
     public FigureType CapturedFigure { get; private set; }
     public int Score { get; set; }
+
+    public bool IsCastling { get; private set; }
+    public bool IsEnPassant { get; private set; }
+    public (char, int) EnPassantTargetPos { get; private set; }
     public Move(FigureType figureToMove, (char, int) from, (char, int) to, FigureType capturedFigure)
     {
         FigureToMove = figureToMove;
@@ -19,14 +23,30 @@ public struct Move
         To = to;
         CapturedFigure = capturedFigure;
         Score = 0;
+        IsEnPassant = false;
+        IsCastling = false;
     }
 
-    public Move(FigureType figureToMove, (char, int) from, (char, int) to)
+    public Move(FigureType figureToMove, (char, int) from, (char, int) to, bool isCastling = false)
     {
         FigureToMove = figureToMove;
         From = from;
         To = to;
         CapturedFigure = FigureType.Null;
         Score = -10;
+        IsCastling = isCastling;
+        IsEnPassant = false;
+    }
+
+    public Move(FigureType figureToMove, (char, int) from, (char, int) to, FigureType capturedFigure, (char, int) enPassantPos)
+    {
+        FigureToMove = figureToMove;
+        From = from;
+        To = to;
+        CapturedFigure = capturedFigure;
+        Score = 0;
+        IsEnPassant = true;
+        IsCastling = false;
+        EnPassantTargetPos = enPassantPos;
     }
 }     

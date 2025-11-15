@@ -21,13 +21,18 @@ public class Pawn : Figure
         {
             char newLetter = (char)(PositionLetter + dx);
             int newNumber = PositionNumber + direction;
-
+            (char, int) newPos = (newLetter, newNumber);
             if (newLetter < 'a' || newLetter > 'h' || newNumber < 1 || newNumber > 8)
                 continue;
 
             var target = board.GetFigureAt(newLetter, newNumber);
             if (target != null && (target.IsWhite != IsWhite || includeAllies))
-                moves.Add(new Move(this.Type, Position, (newLetter, newNumber), target.Type));
+                moves.Add(new Move(this.Type, Position, newPos, target.Type));
+
+            if (board.EnPassantAvailable && board.EnPassantTarget.Item1 == PositionLetter)
+            {
+                moves.Add(new Move(this.Type, Position, newPos, target.Type, board.EnPassantTarget));
+            }
         }
 
         return moves;

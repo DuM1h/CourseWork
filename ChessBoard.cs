@@ -12,18 +12,19 @@ public class ChessBoard
     public bool CanBlackCastleKingside { get; private set; }
     public bool CanBlackCastleQueenside { get; private set; }
     public bool EnPassantAvailable { get; private set; }
-    public char[] EnPassantTarget { get; private set; }
+    public (char, int) EnPassantTarget { get; private set; }
     public int HalfmoveClock { get; private set; }
     public int FullmoveNumber { get; private set; }
 
     private int previousHalfmoveClockValue;
     private bool previousEnPassantAvailable;
-    private char[] previousEnPassantTarget = new char[2];
+    private (char, int) previousEnPassantTarget;
     private int previousFullmoveNumber;
     private bool previousCanWhiteCastleKingside;
     private bool previousCanWhiteCastleQueenside;
     private bool previousCanBlackCastleKingside;
     private bool previousCanBlackCastleQueenside;
+    private Figure enPassantCapturedPawn;
 
 
     public ChessBoard(string fen)
@@ -32,13 +33,13 @@ public class ChessBoard
         InitializeBoard();
     }
 
-    public void SetFigureAt(Figure figure, int fromLetter, int fromNumber, char toLetter, int toNumber)
+    public void SetFigureAt(Figure figure, Move move)
     {
-        int fromRow = 8 - fromNumber;
-        int fromCol = fromLetter - 'a';
+        int fromRow = 8 - move.From.Item2;
+        int fromCol = move.From.Item1 - 'a';
 
-        int toRow = 8 - toNumber;
-        int toCol = toLetter - 'a';
+        int toRow = 8 - move.To.Item2;
+        int toCol = move.To.Item1 - 'a';
 
         board[toRow, toCol] = figure;
         board[fromRow, fromCol] = null;
@@ -47,16 +48,16 @@ public class ChessBoard
         previousCanBlackCastleQueenside = CanBlackCastleQueenside;
         previousCanWhiteCastleKingside = CanWhiteCastleKingside;
         previousCanWhiteCastleQueenside = CanWhiteCastleQueenside;
-        if (figure is King)
+        if (move.IsCastling)
         {
             if (figure.IsWhite)
             {
-                if (fromLetter == 'e' && fromNumber == 1 && toLetter == 'g')
+                if (move.From.Item1 == 'e' && move.From.Item2 == 1 && move.To.Item1 == 'g')
                 {
                     board[7, 5] = board[7, 7];
                     board[7, 7] = null;
                 }
-                else if (fromLetter == 'e' && fromNumber == 1 && toLetter == 'c')
+                else if (move.From.Item1 == 'e' && move.From.Item2 == 1 && move.To.Item1 == 'c')
                 {
                     board[7, 3] = board[7, 0];
                     board[7, 0] = null;
@@ -67,12 +68,12 @@ public class ChessBoard
             }
             else
             {
-                if (fromLetter == 'e' && fromNumber == 8 && toLetter == 'g')
+                if (move.From.Item1 == 'e' && move.From.Item2 == 8 && move.To.Item1 == 'g')
                 {
                     board[0, 5] = board[0, 7];
                     board[0, 7] = null;
                 }
-                else if (fromLetter == 'e' && fromNumber == 8 && toLetter == 'c')
+                else if (move.From.Item1 == 'e' && move.From.Item2 == 8 && move.To.Item1 == 'c')
                 {
                     board[0, 3] = board[0, 0];
                     board[0, 0] = null;
@@ -85,16 +86,16 @@ public class ChessBoard
         {
             if (figure.IsWhite)
             {
-                if (fromLetter == 'a' && fromNumber == 1)
+                if (move.From.Item1 == 'a' && move.From.Item2 == 1)
                     CanWhiteCastleQueenside = false;
-                else if (fromLetter == 'h' && fromNumber == 1)
+                else if (move.From.Item1 == 'h' && move.From.Item2 == 1)
                     CanWhiteCastleKingside = false;
             }
             else
             {
-                if (fromLetter == 'a' && fromNumber == 8)
+                if (move.From.Item1 == 'a' && move.From.Item2 == 8)
                     CanBlackCastleQueenside = false;
-                else if (fromLetter == 'h' && fromNumber == 8)
+                else if (move.From.Item1 == 'h' && move.From.Item2 == 8)
                     CanBlackCastleKingside = false;
             }
         }
@@ -108,21 +109,28 @@ public class ChessBoard
         previousEnPassantAvailable = EnPassantAvailable;
         if (EnPassantAvailable)
         {
-            previousEnPassantTarget[0] = EnPassantTarget[0];
-            previousEnPassantTarget[1] = EnPassantTarget[1];
+            previousEnPassantTarget = EnPassantTarget;
         }
         else
-            previousEnPassantTarget = null;
+            previousEnPassantTarget = ('-',0);
 
-        if (figure is Pawn && Math.Abs(toNumber - fromNumber) == 2)
+        if (move.IsEnPassant)
+        {
+            int EnPassantLetter = move.EnPassantTargetPos.Item1 - '0';
+            int EnPassantNumber = 8 - move.EnPassantTargetPos.Item2;
+            enPassantCapturedPawn = board[EnPassantLetter, EnPassantNumber];
+            board[EnPassantLetter, EnPassantNumber] = null;
+        }
+
+        if (figure is Pawn && Math.Abs(move.To.Item2 - move.From.Item2) == 2)
         {
             EnPassantAvailable = true;
-            EnPassantTarget = new char[] { toLetter, (char)((fromNumber + toNumber) / 2 + '0') };
+            EnPassantTarget = (move.To.Item1, move.To.Item2 - 1);
         }
         else
         {
             EnPassantAvailable = false;
-            EnPassantTarget = null;
+            EnPassantTarget = ('-', 0);
         }
         SwitchTurn();
         previousFullmoveNumber = FullmoveNumber;
@@ -142,6 +150,44 @@ public class ChessBoard
         board[toRow, toCol] = figure;
         board[fromRow, fromCol] = target;
 
+        if (move.IsEnPassant)
+        {
+            int EnPassantLetter = move.EnPassantTargetPos.Item1 - '0';
+            int EnPassantNumber = 8 - move.EnPassantTargetPos.Item2;
+            board[EnPassantLetter, EnPassantNumber] = enPassantCapturedPawn;
+        }
+
+        if (move.IsCastling)
+        {
+            if (figure.IsWhite)
+            {
+                if (move.From.Item1 == 'e' && move.From.Item2 == 1 && move.To.Item1 == 'g')
+                {
+                    board[7, 7] = board[7, 5];
+                    board[7, 5] = null;                    
+                }
+                else if (move.From.Item1 == 'e' && move.From.Item2 == 1 && move.To.Item1 == 'c')
+                {
+                    board[7, 0] = board[7, 3];
+                    board[7, 3] = null;
+
+                }
+            }
+            else
+            {
+                if (move.From.Item1 == 'e' && move.From.Item2 == 8 && move.To.Item1 == 'g')
+                {
+                    board[0, 7] = board[0, 5];
+                    board[0, 5] = null;
+                }
+                else if (move.From.Item1 == 'e' && move.From.Item2 == 8 && move.To.Item1 == 'c')
+                {
+                    board[0, 0] = board[0, 3];
+                    board[0, 3] = null;
+                }
+            }
+        }
+
         CanBlackCastleKingside = previousCanBlackCastleKingside;
         CanBlackCastleQueenside = previousCanBlackCastleQueenside;
         CanWhiteCastleKingside = previousCanWhiteCastleKingside;
@@ -160,8 +206,6 @@ public class ChessBoard
         string[] fenParts;
         fenParts = Fen.Split(' ');
         string[] rows = fenParts[0].Split('/');
-
-        char[] EnPassantTargetFile = new char[2];
 
         if (fenParts[1] == "w")
             IsWhiteTurn = true;
@@ -188,15 +232,13 @@ public class ChessBoard
         if (fenParts[3] != "-")
         {
             EnPassantAvailable = true;
-            EnPassantTargetFile[0] = fenParts[3][0];
-            EnPassantTargetFile[1] = fenParts[3][1];
-            EnPassantTarget = EnPassantTargetFile;
+            int num = fenParts[3][1]-'0';
+            EnPassantTarget = (fenParts[3][0], num);
         }
         else
         {
             EnPassantAvailable = false;
-            EnPassantTargetFile = null;
-            EnPassantTarget = EnPassantTargetFile;
+            EnPassantTarget = ('-',0);
         }
 
         HalfmoveClock = int.Parse(fenParts[4]);
@@ -388,7 +430,11 @@ public class ChessBoard
         }
 
         if (EnPassantAvailable)
-            fenParts[3] = new string(EnPassantTarget);
+        {
+            char letter = EnPassantTarget.Item1;
+            char num = (char)(EnPassantTarget.Item2+'0');
+            fenParts[3] = letter.ToString() + num.ToString();
+        }
         else
             fenParts[3] = "-";
 

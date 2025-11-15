@@ -16,8 +16,7 @@ static public class CalculateSystem
         float bestResult = float.MinValue;
         float beta = float.MaxValue;
         Figure bestFigure = null;
-        (char, int) from = ('a', 1);
-        (char, int) to = ('a', 1);
+        Move bestMove = new Move();
 
         King blackKing = board.GetBlackKing();
         King whiteKing = board.GetWhiteKing();
@@ -41,18 +40,17 @@ static public class CalculateSystem
         {
             var figureCopy = boardCopy.GetFigureAt(move.From.Item1, move.From.Item2);
             var target = boardCopy.GetFigureAt(move.To.Item1, move.To.Item2);
-            figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
+            figureCopy.Move(move, boardCopy);
             float result = -FindBestScore(boardCopy, depth-1, -beta, -bestResult);
             figureCopy.Unmove(boardCopy, move, target);
             if (result > bestResult)
             {
                 bestResult = result;
                 bestFigure = board.GetFigureAt(move.From.Item1, move.From.Item2);
-                from = (bestFigure.PositionLetter, bestFigure.PositionNumber);
-                to = move.To;
+                bestMove = move;
             }
         }     
-        PrintResult(bestFigure, from, to, depth);
+        PrintResult(bestFigure, bestMove, depth);
 
         Console.WriteLine("Оновити позицію?");
         Console.WriteLine("1. Так");
@@ -60,8 +58,8 @@ static public class CalculateSystem
         choice = Console.ReadLine();
         if (choice == "1" && bestFigure != null)
         {
-            var figureToMove = board.GetFigureAt(from.Item1, from.Item2);
-            figureToMove.Move(to.Item1, to.Item2, board);
+            var figureToMove = board.GetFigureAt(bestMove.From.Item1, bestMove.From.Item2);
+            figureToMove.Move(bestMove, board);
         }
         for (int i = 0; i < historyScore.GetLength(0); i++)
         {
@@ -72,13 +70,13 @@ static public class CalculateSystem
         }
     }
 
-    static void PrintResult(Figure bestFigure, (char, int) from, (char, int) to, int depth)
+    static void PrintResult(Figure bestFigure, Move move, int depth)
     {
         Console.WriteLine($"---");
         if (bestFigure != null)
         {
             Console.WriteLine("Найкращий хід:");
-            Console.WriteLine($"{bestFigure.Symbol} з {from.Item1}{from.Item2} на {to.Item1}{to.Item2}");
+            Console.WriteLine($"{bestFigure.Symbol} з {move.From.Item1}{move.From.Item2} на {move.To.Item1}{move.To.Item2}");
         }
         else
         {
@@ -117,7 +115,7 @@ static public class CalculateSystem
         {
             var figureCopy = boardCopy.GetFigureAt(move.From.Item1, move.From.Item2);
             var target = boardCopy.GetFigureAt(move.To.Item1, move.To.Item2);
-            figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
+            figureCopy.Move(move, boardCopy);
             float score = -FindBestScore(boardCopy, depth - 1, -beta, -alpha);
             figureCopy.Unmove(boardCopy, move, target);
             if (score >= beta)
@@ -156,7 +154,7 @@ static public class CalculateSystem
                     var figureCopy = boardCopy.GetFigureAt(move.From.Item1, move.From.Item2);
                     var target = boardCopy.GetFigureAt(move.To.Item1, move.To.Item2);
                     var kingCopy = board.IsWhiteTurn ? boardCopy.GetWhiteKing() : boardCopy.GetBlackKing();
-                    figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
+                    figureCopy.Move(move, boardCopy);
                     if (!kingCopy.IsChecking(boardCopy))
                     {
                         moves.Add(move);

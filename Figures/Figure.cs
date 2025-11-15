@@ -65,13 +65,13 @@ public abstract class Figure
     }
 
     public abstract List<Move> GetPossibleMoves(ChessBoard board, bool includeAllies = false);
-    public void Move(char toLetter,int toNumber, ChessBoard board)
+    public void Move(Move move, ChessBoard board)
     {
         int fromLetter = PositionLetter;
         int fromNumber = PositionNumber;
-        board.SetFigureAt(this, fromLetter, fromNumber, toLetter, toNumber);
-        PositionNumber = toNumber;
-        PositionLetter = toLetter;
+        board.SetFigureAt(this, move);
+        PositionNumber = move.To.Item2;
+        PositionLetter = move.To.Item1;
     }
 
     public void Unmove(ChessBoard board, Move move, Figure target)
