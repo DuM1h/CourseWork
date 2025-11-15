@@ -118,7 +118,8 @@ public class ChessBoard
         {
             int EnPassantLetter = move.EnPassantTargetPos.Item1 - 'a';
             int EnPassantNumber = 8 - move.EnPassantTargetPos.Item2;
-            var pawn = board[EnPassantLetter, EnPassantNumber];
+            int dir = move.EnPassantTargetPos.Item2 == 6 ? -1 : 1;
+            var pawn = board[EnPassantLetter, EnPassantNumber+dir];
             enPassantCapturedPawn = new Pawn(pawn.PositionLetter, pawn.PositionNumber, pawn.IsWhite, pawn.Value);
             board[EnPassantLetter, EnPassantNumber] = null;
         }
