@@ -43,7 +43,7 @@ static public class CalculateSystem
             var target = boardCopy.GetFigureAt(move.To.Item1, move.To.Item2);
             figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
             float result = -FindBestScore(boardCopy, depth-1, -beta, -bestResult);
-            boardCopy.Unmove(figureCopy, move, target);
+            figureCopy.Unmove(boardCopy, move, target);
             if (result > bestResult)
             {
                 bestResult = result;
@@ -119,7 +119,7 @@ static public class CalculateSystem
             var target = boardCopy.GetFigureAt(move.To.Item1, move.To.Item2);
             figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
             float score = -FindBestScore(boardCopy, depth - 1, -beta, -alpha);
-            boardCopy.Unmove(figureCopy, move, target);
+            figureCopy.Unmove(boardCopy, move, target);
             if (score >= beta)
             {
                 if (move.CapturedFigure == FigureType.Null)
@@ -161,7 +161,7 @@ static public class CalculateSystem
                     {
                         moves.Add(move);
                     }
-                    boardCopy.Unmove(figure, move, target);
+                    figureCopy.Unmove(boardCopy, move, target);
                 }
             }
         }

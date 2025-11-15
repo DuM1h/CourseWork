@@ -74,6 +74,13 @@ public abstract class Figure
         PositionLetter = toLetter;
     }
 
+    public void Unmove(ChessBoard board, Move move, Figure target)
+    {
+        PositionLetter = move.From.Item1;
+        PositionNumber = move.From.Item2;
+        board.Unmove(this, move, target);
+    }
+
     public bool IsAttacking(ChessBoard chessBoard)
     {
         bool isAttacked = false;
