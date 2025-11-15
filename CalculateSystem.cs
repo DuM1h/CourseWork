@@ -36,12 +36,14 @@ static public class CalculateSystem
         ScoreMoves(allMoves, depth);
         allMoves.Sort((a, b) => b.Score.CompareTo(a.Score));
 
+        ChessBoard boardCopy = new(board);
         foreach (var move in allMoves)
         {
-            ChessBoard boardCopy = new(board);
             var figureCopy = boardCopy.GetFigureAt(move.From.Item1, move.From.Item2);
+            var target = boardCopy.GetFigureAt(move.To.Item1, move.To.Item2);
             figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
             float result = -FindBestScore(boardCopy, depth-1, -beta, -bestResult);
+            boardCopy.Unmove(figureCopy, move, target);
             if (result > bestResult)
             {
                 bestResult = result;
@@ -109,13 +111,15 @@ static public class CalculateSystem
         
         ScoreMoves(allMoves, depth);
         allMoves.Sort((a, b) => b.Score.CompareTo(a.Score));
+
+        ChessBoard boardCopy = new(board);
         foreach (var move in allMoves)
         {
-            ChessBoard boardCopy = new(board);
             var figureCopy = boardCopy.GetFigureAt(move.From.Item1, move.From.Item2);
+            var target = boardCopy.GetFigureAt(move.To.Item1, move.To.Item2);
             figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
             float score = -FindBestScore(boardCopy, depth - 1, -beta, -alpha);
-
+            boardCopy.Unmove(figureCopy, move, target);
             if (score >= beta)
             {
                 if (move.CapturedFigure == FigureType.Null)
@@ -144,18 +148,20 @@ static public class CalculateSystem
                     continue;
 
                 var possibleMoves = figure.GetPossibleMoves(board);
+                ChessBoard boardCopy = new(board);
                 foreach (var move in possibleMoves)
                 {
                     if (move.CapturedFigure == FigureType.King)
                         continue;
-                    ChessBoard boardCopy = new(board);
                     var figureCopy = boardCopy.GetFigureAt(move.From.Item1, move.From.Item2);
+                    var target = boardCopy.GetFigureAt(move.To.Item1, move.To.Item2);
                     var kingCopy = board.IsWhiteTurn ? boardCopy.GetWhiteKing() : boardCopy.GetBlackKing();
                     figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
                     if (!kingCopy.IsChecking(boardCopy))
                     {
                         moves.Add(move);
                     }
+                    boardCopy.Unmove(figure, move, target);
                 }
             }
         }

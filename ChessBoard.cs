@@ -16,6 +16,11 @@ public class ChessBoard
     public int HalfmoveClock { get; private set; }
     public int FullmoveNumber { get; private set; }
 
+    private int previousHalfmoveClockValue;
+    private bool previousEnPassantAvailable;
+    private char[] previousEnPassantTarget = new char[2];
+    private int previousFullmoveNumber;
+
 
     public ChessBoard(string fen)
     {
@@ -85,10 +90,22 @@ public class ChessBoard
                     CanBlackCastleKingside = false;
             }
         }
+        previousHalfmoveClockValue = HalfmoveClock;
         if (figure is Pawn || board[toRow, toCol] != null)
             HalfmoveClock = 0;
         else
             HalfmoveClock++;
+
+
+        previousEnPassantAvailable = EnPassantAvailable;
+        if (EnPassantAvailable)
+        {
+            previousEnPassantTarget[0] = EnPassantTarget[0];
+            previousEnPassantTarget[1] = EnPassantTarget[1];
+        }
+        else
+            previousEnPassantTarget = null;
+
         if (figure is Pawn && Math.Abs(toNumber - fromNumber) == 2)
         {
             EnPassantAvailable = true;
@@ -100,8 +117,28 @@ public class ChessBoard
             EnPassantTarget = null;
         }
         SwitchTurn();
+        previousFullmoveNumber = FullmoveNumber;
         if (!IsWhiteTurn)
             FullmoveNumber++;
+        UpdateFen();
+    }
+
+    public void Unmove(Figure figure, Move move, Figure target)
+    {
+        int fromRow = 8 - move.To.Item2;
+        int fromCol = move.To.Item1 - 'a';
+
+        int toRow = 8 - move.From.Item2;
+        int toCol = move.From.Item1 - 'a';
+
+        board[toRow, toCol] = figure;
+        board[fromRow, fromCol] = target;
+
+        HalfmoveClock = previousHalfmoveClockValue;
+        FullmoveNumber = previousFullmoveNumber;
+        EnPassantAvailable = previousEnPassantAvailable;
+        EnPassantTarget = previousEnPassantTarget;
+        SwitchTurn();
         UpdateFen();
     }
 
