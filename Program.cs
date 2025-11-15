@@ -32,9 +32,9 @@ class Program
                     chessBoard.ShowBoard();
                     Continue(); break;
                 case "2":
-                    Console.WriteLine("Введіть глибину прорахунку (рекомендовано 3-4): ");
+                    Console.WriteLine("Введіть глибину прорахунку (рекомендовано 3-4), не більше 6: ");
                     int depth;
-                    while(!int.TryParse(Console.ReadLine(), out depth) || depth < 1)
+                    while(!int.TryParse(Console.ReadLine(), out depth) || depth < 1 || depth > 6)
                     {
                         Console.WriteLine("Невірне значення. Спробуйте ще раз.");
                     }

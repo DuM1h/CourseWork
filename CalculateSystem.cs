@@ -5,6 +5,10 @@ namespace CourseWork;
 static public class CalculateSystem
 {
     static public long nodesSearched;
+    private const int MAX_DEPTH = 7;
+    static private Move[,] killerMoves = new Move[MAX_DEPTH, 2];
+
+    static private int[,] historyScore = new int[64, 64];
     static public void CalculateBestMove(ChessBoard board, int depth)
     {
         nodesSearched = 0;
@@ -29,12 +33,13 @@ static public class CalculateSystem
         }
 
         List<Move> allMoves = GenerateLegalMoves(board);
+        ScoreMoves(allMoves, depth);
+        allMoves.Sort((a, b) => b.Score.CompareTo(a.Score));
 
         foreach (var move in allMoves)
         {
             ChessBoard boardCopy = new(board);
             var figureCopy = boardCopy.GetFigureAt(move.From.Item1, move.From.Item2);
-            var kingCopy = board.IsWhiteTurn ? boardCopy.GetWhiteKing() : boardCopy.GetBlackKing();
             figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
             float result = -FindBestScore(boardCopy, depth-1, -beta, -bestResult);
             if (result > bestResult)
@@ -56,7 +61,13 @@ static public class CalculateSystem
             var figureToMove = board.GetFigureAt(from.Item1, from.Item2);
             figureToMove.Move(to.Item1, to.Item2, board);
         }
-
+        for (int i = 0; i < historyScore.GetLength(0); i++)
+        {
+            for (int j = 0; j < historyScore.GetLength(1); j++)
+            {
+                historyScore[i, j] /= 2;
+            }
+        }
     }
 
     static void PrintResult(Figure bestFigure, (char, int) from, (char, int) to, int depth)
@@ -85,29 +96,35 @@ static public class CalculateSystem
         {
             return board.CalсulateAdvantage();
         }
-        King blackKing = board.GetBlackKing();
-        King whiteKing = board.GetWhiteKing();
 
-        if (!board.IsWhiteTurn && blackKing.IsMated(board))
+        List<Move> allMoves = GenerateLegalMoves(board);
+        if (allMoves.Count == 0)
         {
-            return float.MinValue;
-        }
-        if (board.IsWhiteTurn && whiteKing.IsMated(board))
-        {
-            return float.MinValue;
+            King kingToMove = board.IsWhiteTurn ? board.GetWhiteKing() : board.GetBlackKing();
+            if (kingToMove.IsChecking(board))
+                return float.MinValue;
+            else
+                return 0.0f;
         }
         
-        List<Move> allMoves = GenerateLegalMoves(board);
+        ScoreMoves(allMoves, depth);
+        allMoves.Sort((a, b) => b.Score.CompareTo(a.Score));
         foreach (var move in allMoves)
         {
             ChessBoard boardCopy = new(board);
             var figureCopy = boardCopy.GetFigureAt(move.From.Item1, move.From.Item2);
-            var kingCopy = board.IsWhiteTurn ? boardCopy.GetWhiteKing() : boardCopy.GetBlackKing();
             figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
             float score = -FindBestScore(boardCopy, depth - 1, -beta, -alpha);
 
             if (score >= beta)
+            {
+                if (move.CapturedFigure == FigureType.Null)
+                {
+                    StoreKillerMove(move, depth);
+                    historyScore[move.FromIndex, move.ToIndex] += depth*depth;
+                }
                 return beta;
+            }
 
             if (score > alpha)
                 alpha = score;
@@ -129,21 +146,71 @@ static public class CalculateSystem
                 var possibleMoves = figure.GetPossibleMoves(board);
                 foreach (var move in possibleMoves)
                 {
+                    if (move.CapturedFigure == FigureType.King)
+                        continue;
                     ChessBoard boardCopy = new(board);
                     var figureCopy = boardCopy.GetFigureAt(move.From.Item1, move.From.Item2);
                     var kingCopy = board.IsWhiteTurn ? boardCopy.GetWhiteKing() : boardCopy.GetBlackKing();
                     figureCopy.Move(move.To.Item1, move.To.Item2, boardCopy);
                     if (!kingCopy.IsChecking(boardCopy))
                     {
-                        var captured = board.GetFigureAt(move.To.Item1, move.To.Item2);
-                        if (captured is King)
-                            continue;
                         moves.Add(move);
                     }
                 }
             }
         }
-        moves.Sort((a, b) => b.Score.CompareTo(a.Score));
         return moves;
+    }
+
+    static private int Value(FigureType type)
+    {
+        switch (type)
+        {
+            case (FigureType.King): return 2;
+            case (FigureType.Queen): return 9;
+            case (FigureType.Rook): return 5;
+            case (FigureType.Bishop): return 3;
+            case (FigureType.Knight): return 3;
+            case (FigureType.Pawn): return 1;
+        }
+        return 0;
+    }
+
+    static private void ScoreMoves(List<Move> moves, int depth)
+    {
+        for (int i = 0; i < moves.Count; i++)
+        {
+            Move move = moves[i];
+
+            if (move.CapturedFigure != FigureType.Null)
+            {
+                move.Score =10000 + 10 * Value(move.CapturedFigure) - Value(move.FigureToMove);
+            }
+            else
+            {
+                if (move.Equals(killerMoves[depth, 0]))
+                {
+                    move.Score = 9000;
+                }
+                else if (move.Equals(killerMoves[depth, 1]))
+                {
+                    move.Score = 8000;
+                }
+                else
+                {
+                    move.Score = historyScore[move.FromIndex,move.ToIndex];
+                }
+            }
+            moves[i] = move;
+        }
+    }
+
+    static private void StoreKillerMove(Move move, int depth)
+    {
+        if (!killerMoves[depth, 0].Equals(move))
+        {
+            killerMoves[depth, 1] = killerMoves[depth, 0];
+            killerMoves[depth, 0] = move;
+        }
     }
 }
