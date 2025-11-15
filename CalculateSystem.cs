@@ -138,7 +138,8 @@ static public class CalculateSystem
 
     static List<Move> GenerateLegalMoves(ChessBoard board)
     {
-        var moves = new List<Move>();
+        var moves = new List<Move>();   
+        ChessBoard boardCopy = new(board);
         for (int i = 0; i < 8; i++)
         {
             for (int j = 0; j < 8; j++)
@@ -148,7 +149,6 @@ static public class CalculateSystem
                     continue;
 
                 var possibleMoves = figure.GetPossibleMoves(board);
-                ChessBoard boardCopy = new(board);
                 foreach (var move in possibleMoves)
                 {
                     if (move.CapturedFigure == FigureType.King)
