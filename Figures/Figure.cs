@@ -79,6 +79,7 @@ public abstract class Figure
     {
         PositionLetter = move.From.Item1;
         PositionNumber = move.From.Item2;
+        Position = (PositionLetter, PositionNumber);
         board.Unmove(this, move, target);
     }
     public void FindAttackers(ChessBoard board)
