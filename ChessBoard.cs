@@ -46,8 +46,10 @@ public class ChessBoard
         int toCol = move.To.Item1 - 'a';
 
         lastFigure = figure;
-        if (board[toRow, toCol] != null) 
+        if (board[toRow, toCol] != null)
             lastCapturedFigure = board[toRow, toCol];
+        else
+            lastCapturedFigure = null;
 
         board[toRow, toCol] = figure;
         board[fromRow, fromCol] = null;
@@ -174,7 +176,7 @@ public class ChessBoard
     {
         if (lastFigure != null)
         {
-            Unmove(lastFigure, lastMove, lastCapturedFigure);
+            lastFigure.Unmove(this, lastMove, lastCapturedFigure);
             return 0;
         }
         else 
