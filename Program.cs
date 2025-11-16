@@ -22,8 +22,9 @@ class Program
             Console.Clear();
             Console.WriteLine("1. Показати шахівницю");
             Console.WriteLine("2. Прорахувати найкращий хід");
-            Console.WriteLine("3. Вивести FEN-нотацію");
-            Console.WriteLine("4. Ввести нову FEN-нотацію");
+            Console.WriteLine("3. Відмінити останній хід");
+            Console.WriteLine("4. Вивести FEN-нотацію");
+            Console.WriteLine("5. Ввести нову FEN-нотацію");
             Console.WriteLine("0. Вийти");
 
             choice = Console.ReadLine();
@@ -42,9 +43,15 @@ class Program
                     CalculateSystem.CalculateBestMove(chessBoard, depth);
                     Continue(); break;
                 case "3":
-                    chessBoard.PrintFen();
+                    if (chessBoard.Unmove() == 0)
+                        Console.WriteLine("Хід відмінено успішно.");
+                    else
+                        Console.WriteLine("Або хід вже відмінено, або ходу ще не було.");
                     Continue(); break;
                 case "4":
+                    chessBoard.PrintFen();
+                    Continue(); break;
+                case "5":
                     Console.WriteLine("Введіть FEN-нотацію: ");
                     fen = Console.ReadLine();
                     chessBoard = new ChessBoard(fen);

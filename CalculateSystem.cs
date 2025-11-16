@@ -79,14 +79,14 @@ static public class CalculateSystem
             Console.Write($"{bestFigure.Symbol} з {move.From.Item1}{move.From.Item2} на {move.To.Item1}{move.To.Item2}");
             if (move.IsPromoting)
             {
-                Console.Write($" з перетворенням на {move.GetSymbol(bestFigure)}\n");
+                Console.Write($" з перетворенням на {move.GetSymbol(bestFigure)}");
             }
         }
         else
         {
             Console.WriteLine("Немає можливих ходів для покращення позиції.");
         }
-        Console.WriteLine($"---");
+        Console.WriteLine($"\n---");
         Console.WriteLine($"Глибина пошуку: {depth}");
         Console.WriteLine($"Всього проаналізовано вузлів: {nodesSearched:N0}"); // :N0 для форматування (напр. 1,234,567)
         Console.WriteLine($"---");

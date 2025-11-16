@@ -24,6 +24,10 @@ public class ChessBoard
     private bool previousCanWhiteCastleQueenside;
     private bool previousCanBlackCastleKingside;
     private bool previousCanBlackCastleQueenside;
+    private Move lastMove;
+    private Move previousLastMove;
+    private Figure lastFigure = null;
+    private Figure lastCapturedFigure;
     private Figure enPassantCapturedPawn;
 
 
@@ -40,6 +44,10 @@ public class ChessBoard
 
         int toRow = 8 - move.To.Item2;
         int toCol = move.To.Item1 - 'a';
+
+        lastFigure = figure;
+        if (board[toRow, toCol] != null) 
+            lastCapturedFigure = board[toRow, toCol];
 
         board[toRow, toCol] = figure;
         board[fromRow, fromCol] = null;
@@ -153,7 +161,8 @@ public class ChessBoard
                     break;
             }
         }
-
+        previousLastMove = lastMove;
+        lastMove = move;
         SwitchTurn();
         previousFullmoveNumber = FullmoveNumber;
         if (!IsWhiteTurn)
@@ -161,6 +170,16 @@ public class ChessBoard
         UpdateFen();
     }
 
+    public int Unmove()
+    {
+        if (lastFigure != null)
+        {
+            Unmove(lastFigure, lastMove, lastCapturedFigure);
+            return 0;
+        }
+        else 
+            return 1;
+    }
     public void Unmove(Figure figure, Move move, Figure target)
     {
         int fromRow = 8 - move.To.Item2;
@@ -210,7 +229,8 @@ public class ChessBoard
                 }
             }
         }
-
+        lastFigure = null;
+        lastMove = previousLastMove;
         CanBlackCastleKingside = previousCanBlackCastleKingside;
         CanBlackCastleQueenside = previousCanBlackCastleQueenside;
         CanWhiteCastleKingside = previousCanWhiteCastleKingside;
@@ -302,6 +322,17 @@ public class ChessBoard
 
     public void ShowBoard()
     {
+        int toRow = 8 - lastMove.To.Item2;
+        int toCol = lastMove.To.Item1 - 'a';
+        int fromRow = 8 - lastMove.From.Item2;
+        int fromCol = lastMove.From.Item1 - 'a';
+        if (toRow < 0 || toRow > 8 || toCol < 0 || toCol > 8 || fromRow < 0 || fromRow > 8 || fromCol < 0 || fromCol > 8)
+        {
+            toRow = -1;
+            toCol = -1;
+            fromRow = -1; 
+            fromCol = -1;
+        }
         for (int i = 0; i < 9; i++)
         {
             if (i != 8)
@@ -317,8 +348,26 @@ public class ChessBoard
                     break;
                 }
                 if (board[i, j] != null)
-                    Console.Write(board[i, j].Symbol + " ");
-                else
+                {
+                    if (i == toRow && toCol == j)
+                    {
+                        Console.BackgroundColor = ConsoleColor.DarkGray;
+                        Console.Write(board[i, j].Symbol);
+                        Console.Write(" ");
+                        Console.BackgroundColor = ConsoleColor.Black;
+                    }
+                    else
+                    {
+                        Console.Write(board[i, j].Symbol);
+                        Console.Write(" ");
+                    }
+                }
+                else if (i == fromRow && j == fromCol)
+                {
+                    Console.BackgroundColor = ConsoleColor.DarkGray;
+                    Console.Write(". ");
+                    Console.BackgroundColor = ConsoleColor.Black;
+                } else
                     Console.Write(". ");
             }
             Console.WriteLine();
