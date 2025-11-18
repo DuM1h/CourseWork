@@ -18,6 +18,14 @@ public struct Move
     public bool IsCastling { get; private set; }
     public bool IsEnPassant { get; private set; }
     public (char, int) EnPassantTargetPos { get; private set; }
+    public bool IsCastlingKingside
+    {
+        get
+        {
+            if (!IsCastling) return false;
+            return To.Item1 == 'g';
+        }
+    }
     public Move(FigureType figureToMove, (char, int) from, (char, int) to, FigureType capturedFigure)
     {
         FigureToMove = figureToMove;

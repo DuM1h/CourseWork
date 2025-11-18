@@ -58,39 +58,48 @@ public class ChessBoard
         previousCanBlackCastleQueenside = CanBlackCastleQueenside;
         previousCanWhiteCastleKingside = CanWhiteCastleKingside;
         previousCanWhiteCastleQueenside = CanWhiteCastleQueenside;
-        if (move.IsCastling)
+
+        if (move.FigureToMove == FigureType.King)
         {
             if (figure.IsWhite)
             {
-                if (move.From.Item1 == 'e' && move.From.Item2 == 1 && move.To.Item1 == 'g')
-                {
-                    board[7, 5] = board[7, 7];
-                    board[7, 7] = null;
-                }
-                else if (move.From.Item1 == 'e' && move.From.Item2 == 1 && move.To.Item1 == 'c')
-                {
-                    board[7, 3] = board[7, 0];
-                    board[7, 0] = null;
-
-                }
                 CanWhiteCastleKingside = false;
                 CanWhiteCastleQueenside = false;
             }
             else
             {
-                if (move.From.Item1 == 'e' && move.From.Item2 == 8 && move.To.Item1 == 'g')
-                {
-                    board[0, 5] = board[0, 7];
-                    board[0, 7] = null;
-                }
-                else if (move.From.Item1 == 'e' && move.From.Item2 == 8 && move.To.Item1 == 'c')
-                {
-                    board[0, 3] = board[0, 0];
-                    board[0, 0] = null;
-                }
                 CanBlackCastleKingside = false;
                 CanBlackCastleQueenside = false;
             }
+        }
+
+        if (move.IsCastling)
+        {
+            Rook rook = null;
+            if (figure.IsWhite)
+            {
+                if (move.From.Item1 == 'e' && move.From.Item2 == 1 && move.To.Item1 == 'g')
+                {
+                    rook = (Rook)board[7, 7];
+                }
+                else if (move.From.Item1 == 'e' && move.From.Item2 == 1 && move.To.Item1 == 'c')
+                {
+                    rook = (Rook)board[7, 0];
+
+                }
+            }
+            else
+            {
+                if (move.From.Item1 == 'e' && move.From.Item2 == 8 && move.To.Item1 == 'g')
+                {
+                    rook = (Rook)board[0, 7];
+                }
+                else if (move.From.Item1 == 'e' && move.From.Item2 == 8 && move.To.Item1 == 'c')
+                {
+                    rook = (Rook)board[0, 0];
+                }
+            }
+            rook.Move(new Move(FigureType.Rook, (rook.PositionLetter, rook.PositionNumber), move.IsCastlingKingside ? ('f', move.From.Item2) : ('d', move.From.Item2)), this);
         }
         else if (figure is Rook)
         {
