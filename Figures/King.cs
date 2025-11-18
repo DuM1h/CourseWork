@@ -66,7 +66,7 @@ public class King : Figure
                         kingCopy.Move(new Move(this.Type, Position, (newLetter, PositionNumber)), boardCopy);
                         if (kingCopy.IsChecking(boardCopy))
                             break;
-                        if (q == -2)
+                        if (q == -2 && board.GetFigureAt((char)(PositionLetter-3), PositionNumber) == null)
                             moves.Add(new Move(this.Type, Position, (newLetter, PositionNumber), true));
                     }
                 }
@@ -102,7 +102,7 @@ public class King : Figure
                     kingCopy.Move(new Move(this.Type, Position, (newLetter, PositionNumber)), boardCopy);
                     if (kingCopy.IsChecking(boardCopy))
                         break;
-                    if (q == -2)
+                    if (q == -2 && board.GetFigureAt((char)(PositionLetter - 3), PositionNumber) == null)
                         moves.Add(new Move(this.Type, Position, (newLetter, PositionNumber), true));
                 }
             }

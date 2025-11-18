@@ -51,6 +51,24 @@ public class ChessBoard
         else
             lastCapturedFigure = null;
 
+        if(board[toRow, toCol] != null && board[toRow, toCol] is Rook)
+        {
+            if (board[toRow, toCol].IsWhite)
+            {
+                if (move.To.Item1 == 'a' && move.To.Item2 == 1)
+                    CanWhiteCastleQueenside = false;
+                else if (move.To.Item1 == 'h' && move.To.Item2 == 1)
+                    CanWhiteCastleKingside = false;
+            }
+            else
+            {
+                if (move.To.Item1 == 'a' && move.To.Item2 == 8)
+                    CanBlackCastleQueenside = false;
+                else if (move.To.Item1 == 'h' && move.To.Item2 == 8)
+                    CanBlackCastleKingside = false;
+            }
+        }
+
         board[toRow, toCol] = figure;
         board[fromRow, fromCol] = null;
 
