@@ -99,11 +99,14 @@ public class ChessBoard
                 if (move.From.Item1 == 'e' && move.From.Item2 == 1 && move.To.Item1 == 'g')
                 {
                     rook = (Rook)board[7, 7];
+                    board[7, 5] = rook;
+                    board[7, 7] = null;
                 }
                 else if (move.From.Item1 == 'e' && move.From.Item2 == 1 && move.To.Item1 == 'c')
                 {
                     rook = (Rook)board[7, 0];
-
+                    board[7, 3] = rook;
+                    board[7, 0] = null;
                 }
             }
             else
@@ -111,13 +114,18 @@ public class ChessBoard
                 if (move.From.Item1 == 'e' && move.From.Item2 == 8 && move.To.Item1 == 'g')
                 {
                     rook = (Rook)board[0, 7];
+                    board[0, 5] = rook;
+                    board[0, 7] = null;
                 }
                 else if (move.From.Item1 == 'e' && move.From.Item2 == 8 && move.To.Item1 == 'c')
                 {
                     rook = (Rook)board[0, 0];
+                    board[0, 3] = rook;
+                    board[0, 0] = null;
                 }
             }
-            rook.Move(new Move(FigureType.Rook, (rook.PositionLetter, rook.PositionNumber), move.IsCastlingKingside ? ('f', move.From.Item2) : ('d', move.From.Item2)), this);
+            char rookNewLetter = (char)(move.To.Item1 == 'g' ? 'f' : 'd');
+            rook.UpdatePosition(rookNewLetter, move.To.Item2);
         }
         else if (figure is Rook)
         {
@@ -228,35 +236,42 @@ public class ChessBoard
             board[EnPassantNumber + dir, EnPassantLetter] = enPassantCapturedPawn;
         }
 
+
         if (move.IsCastling)
         {
+            Rook rook = null;
             if (figure.IsWhite)
             {
                 if (move.From.Item1 == 'e' && move.From.Item2 == 1 && move.To.Item1 == 'g')
                 {
-                    board[7, 7] = board[7, 5];
+                    rook = (Rook)board[7, 5];
+                    board[7, 7] = rook;
                     board[7, 5] = null;                    
                 }
                 else if (move.From.Item1 == 'e' && move.From.Item2 == 1 && move.To.Item1 == 'c')
                 {
-                    board[7, 0] = board[7, 3];
+                    rook = (Rook)board[7, 3];
+                    board[7, 0] = rook;
                     board[7, 3] = null;
-
                 }
             }
             else
             {
                 if (move.From.Item1 == 'e' && move.From.Item2 == 8 && move.To.Item1 == 'g')
                 {
-                    board[0, 7] = board[0, 5];
+                    rook = (Rook)board[0, 5];
+                    board[0, 7] = rook;
                     board[0, 5] = null;
                 }
                 else if (move.From.Item1 == 'e' && move.From.Item2 == 8 && move.To.Item1 == 'c')
                 {
-                    board[0, 0] = board[0, 3];
+                    rook = (Rook)board[0, 3];
+                    board[0, 0] = rook;
                     board[0, 3] = null;
                 }
             }
+            char rookNewLetter = (char)(move.To.Item1 == 'g' ? 'h' : 'a');
+            rook.UpdatePosition(rookNewLetter, move.To.Item2);
         }
         lastFigure = null;
         lastMove = previousLastMove;

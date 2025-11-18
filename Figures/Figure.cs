@@ -82,6 +82,13 @@ public abstract class Figure
         Position = (PositionLetter, PositionNumber);
         board.Unmove(this, move, target);
     }
+
+    public void UpdatePosition(char positionLetter, int positionNumber)
+    {
+        PositionLetter = positionLetter;
+        PositionNumber = positionNumber;
+        Position = (PositionLetter, PositionNumber);
+    }
     public void FindAttackers(ChessBoard board)
     {
         AttackingFigures = new List<Figure>();
