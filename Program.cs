@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Serialization;
 
 namespace CourseWork;
 // 5rk1/1Q3pp1/6np/p2pB3/3P4/P1n5/2P3PP/4R1K1 w - a6 0 23
@@ -14,24 +15,29 @@ class Program
         Console.InputEncoding = System.Text.Encoding.UTF8;
 
         int choice;
-        Console.WriteLine("Оберіть, що ви бажаєте:");
-        Console.WriteLine("1. Грати");
-        Console.WriteLine("2. Аналізувати позицію");
-        Console.WriteLine("0. Вийти");
-        choice = int.Parse(Console.ReadLine() ?? "0");
-        switch (choice)
+        do
         {
-            case 1:
-                Console.Clear();
-                Play(); break;
-            case 2:
-                Console.Clear();
-                Analyze(); break;
-            case 0:
-                return;
-            default:
-                Console.WriteLine("Невірний вибір"); break;
-        }
+            Console.WriteLine("Оберіть, що ви бажаєте:");
+            Console.WriteLine("1. Грати");
+            Console.WriteLine("2. Аналізувати позицію");
+            Console.WriteLine("0. Вийти");
+            choice = int.Parse(Console.ReadLine() ?? "0");
+            switch (choice)
+            {
+                case 1:
+                    Console.Clear();
+                    Play(); break;
+                case 2:
+                    Console.Clear();
+                    Analyze(); break;
+                case 0:
+                    return;
+                default:
+                    Console.WriteLine("Невірний вибір"); 
+                    Continue();
+                    break;
+            }
+        } while (choice != 0);
     }
 
     static public void Continue()
@@ -42,36 +48,47 @@ class Program
 
     static void Play()
     {
-        Console.WriteLine("Оберіть сторону.");
-        Console.WriteLine("1. Білі");
-        Console.WriteLine("2. Чорні");
-        Console.WriteLine("3. Випадковий вибір");
-        Console.WriteLine("4. Грати двома сторонами");
-        Console.WriteLine("5. Зіграти з позиції");
-        Console.WriteLine("0. Повернутися в головне меню");
-        int choice = int.Parse(Console.ReadLine() ?? "0");
-        switch (choice)
-        {
-            case 1:
-                GameSystem.PlayGame(true); break;
-            case 2:
-                GameSystem.PlayGame(false); break;
-            case 3:
-                Random rand = new Random();
-                bool isWhite = rand.Next(0, 2) == 0;
-                GameSystem.PlayGame(isWhite); break;
-            case 4:
-                //GameSystem.PlayGame(); break;
-            case 5:
-                Console.Clear();
-                Console.WriteLine("Введіть FEN-нотацію: ");
-                string fen = Console.ReadLine();
-                GameSystem.PlayGame(fen); break;
-            case 0:
-                return;
-            default:
-                Console.WriteLine("Невірний вибір"); break;
-        }
+        int choice;
+        do
+        { 
+            Console.Clear();
+            Console.WriteLine("Оберіть сторону.");
+            Console.WriteLine("1. Білі");
+            Console.WriteLine("2. Чорні");
+            Console.WriteLine("3. Випадковий вибір");
+            Console.WriteLine("4. Грати двома сторонами");
+            Console.WriteLine("5. Зіграти з позиції");
+            Console.WriteLine("0. Повернутися в головне меню");
+            choice = int.Parse(Console.ReadLine() ?? "0");
+            switch (choice)
+            {
+                case 1:
+                    GameSystem.PlayGame(true);
+                    Continue(); break;
+                case 2:
+                    GameSystem.PlayGame(false);
+                    Continue(); break;
+                case 3:
+                    Random rand = new Random();
+                    bool isWhite = rand.Next(0, 2) == 0;
+                    GameSystem.PlayGame(isWhite);
+                    Continue(); break;
+                case 4:
+                    GameSystem.PlayGame();
+                    Continue(); break;
+                case 5:
+                    Console.Clear();
+                    Console.WriteLine("Введіть FEN-нотацію: ");
+                    string fen = Console.ReadLine();
+                    GameSystem.PlayGame(fen);
+                    Continue(); break;
+                case 0:
+                    return;
+                default:
+                    Console.WriteLine("Невірний вибір");
+                    Continue(); break;
+            }
+        } while (choice!=0);
     }
     static void Analyze()
     {

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Security.Principal;
+
 
 namespace CourseWork;
 
@@ -591,6 +593,7 @@ public class ChessBoard
     public void PrintFen()
     {
         Console.WriteLine("Fen-нотація для поточної позиції на дошці: "+Fen);
+        TextCopy.ClipboardService.SetText(Fen);
     }
 
     private void PrintAdvatage()
@@ -600,7 +603,7 @@ public class ChessBoard
         char black = '\u25A0';
         char white = '\u25A1';
         int fullSquares = 10;
-        int filledSquares = (int)advantage;
+        int filledSquares = (int)(float.Floor(advantage));
         Console.Write("Оцінка позиції: [");
         if (advantage > 0)
         {

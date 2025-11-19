@@ -14,9 +14,12 @@ static public class CalculateSystem
         nodesSearched = 0;
 
         float bestResult = float.MinValue;
+        float resultControl=float.MaxValue;
         float beta = float.MaxValue;
         Figure bestFigure = null;
         Move bestMove = new Move();
+        Figure lastFigure = null;
+        Move lastMove = new Move();
 
         King blackKing = board.GetBlackKing();
         King whiteKing = board.GetWhiteKing();
@@ -30,6 +33,7 @@ static public class CalculateSystem
                 Console.WriteLine(color+" перемогли");
             else
                 Console.WriteLine("Нічия - пат");
+            return;
         }
 
         ScoreMoves(allMoves, depth);
@@ -46,10 +50,19 @@ static public class CalculateSystem
             if (result > bestResult)
             {
                 bestResult = result;
+                resultControl = result;
                 bestFigure = board.GetFigureAt(move.From.Item1, move.From.Item2);
                 bestMove = move;
             }
+            lastFigure = board.GetFigureAt(move.From.Item1, move.From.Item2);
+            lastMove = move;
         }     
+        if (bestResult != resultControl)
+        {
+            bestResult = resultControl;
+            bestFigure = lastFigure;
+            bestMove = lastMove;
+        }    
         PrintResult(bestFigure, bestMove, depth);
         string choice = "0";
         if (confirm)

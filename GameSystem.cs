@@ -5,7 +5,12 @@ namespace CourseWork;
 static public class GameSystem
 {
     const string basicFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-
+    static private int depth = 0;
+    static public void PlayGame()
+    {
+        ChessBoard board = new ChessBoard(basicFen);
+        Turn(board, true, false);
+    }
     static public void PlayGame(string fen)
     {
         string[] parts = fen.Split(' ');
@@ -20,7 +25,7 @@ static public class GameSystem
         Console.WriteLine("2. Середня");
         Console.WriteLine("3. Важка");
         int choice = int.Parse(Console.ReadLine() ?? "2");
-        int depth = choice switch
+        depth = choice switch
         {
             1 => 2,
             2 => 4,
@@ -29,11 +34,16 @@ static public class GameSystem
         };
         Console.Clear();
         ChessBoard board = new ChessBoard(fen);
+        Turn(board, isWhitePlayer);
+    }
+
+    static public void Turn(ChessBoard board, bool isWhitePlayer, bool withBot=true)
+    {
         while (true)
         {
             Console.Clear();
             board.ShowBoard();
-            if (board.IsWhiteTurn == isWhitePlayer)
+            if (board.IsWhiteTurn == isWhitePlayer || !withBot)
             {
                 var possibleMoves = CalculateSystem.GenerateLegalMoves(board);
                 if (possibleMoves.Count == 0)
@@ -44,9 +54,16 @@ static public class GameSystem
                         Console.WriteLine(color + " перемогли");
                     else
                         Console.WriteLine("Нічия - пат");
+                    break;
                 }
                 Console.WriteLine("Ваш хід. Введіть хід у форматі 'e2 e4':");
                 string input = Console.ReadLine() ?? "";
+                if (input.ToLower() == "exit" || input.ToLower() == "quit")
+                    return;
+                if (input.ToLower() == "fen" || input.ToLower() == "getfen")
+                {
+                    board.PrintFen();
+                }
                 string[] parts = input.Split(' ');
                 if (parts.Length != 2)
                 {
@@ -56,15 +73,22 @@ static public class GameSystem
                 }
                 (char fromLetter, int fromNumber) = (parts[0][0], int.Parse(parts[0][1].ToString()));
                 (char toLetter, int toNumber) = (parts[1][0], int.Parse(parts[1][1].ToString()));
+                if (fromLetter < 'a' || fromLetter > 'h' || toLetter < 'a' || toLetter > 'h' ||
+                    fromNumber < 1 || fromNumber > 8 || toNumber < 1 || toNumber > 8)
+                {
+                    Console.WriteLine("Невірні координати. Спробуйте ще раз.");
+                    Program.Continue();
+                    continue;
+                }
                 var figure = board.GetFigureAt(fromLetter, fromNumber);
                 var target = board.GetFigureAt(toLetter, toNumber);
-                if (figure == null || figure.IsWhite != board.IsWhiteTurn)
+                if (figure == null || (figure.IsWhite != board.IsWhiteTurn))
                 {
                     Console.WriteLine("Невірний хід. Спробуйте ще раз. pop");
                     Program.Continue();
                     continue;
                 }
-                
+
                 Move move;
                 if (figure.Type == FigureType.Pawn && (toNumber == 1 || toNumber == 8))
                 {
@@ -89,7 +113,7 @@ static public class GameSystem
                         move = new Move(figure.Type, (fromLetter, fromNumber), (toLetter, toNumber), FigureType.Null, promotionType);
                     else
                         move = new Move(figure.Type, (fromLetter, fromNumber), (toLetter, toNumber), target.Type, promotionType);
-                    
+
                     figure.Move(move, board);
                     continue;
                 }
@@ -149,8 +173,17 @@ static public class GameSystem
             }
             else
             {
+                if (!withBot)
+                {
+                    Console.WriteLine("Хід супротивника. Натисніть Enter, щоб продовжити...");
+                    Console.ReadLine();
+                    continue;
+                }
                 Console.WriteLine("Хід комп'ютера...");
                 CalculateSystem.CalculateBestMove(board, depth, false);
+                var otherMoves = CalculateSystem.GenerateLegalMoves(board);
+                if (otherMoves.Count == 0)
+                    break;
             }
             Program.Continue();
         }
