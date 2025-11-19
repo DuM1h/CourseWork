@@ -41,10 +41,10 @@ public class Pawn : Figure
             {
                 if (newNumber == promotionRank)
                 {
-                    moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), target.Type, FigureType.Queen));
-                    moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), target.Type, FigureType.Rook));
-                    moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), target.Type, FigureType.Bishop));
-                    moves.Add(new Move(this.Type, Position, (PositionLetter, PositionNumber + direction), target.Type, FigureType.Knight));
+                    moves.Add(new Move(this.Type, Position, newPos, target.Type, FigureType.Queen));
+                    moves.Add(new Move(this.Type, Position, newPos, target.Type, FigureType.Rook));
+                    moves.Add(new Move(this.Type, Position, newPos, target.Type, FigureType.Bishop));
+                    moves.Add(new Move(this.Type, Position, newPos, target.Type, FigureType.Knight));
                 } else
                     moves.Add(new Move(this.Type, Position, newPos, target.Type));
             }
