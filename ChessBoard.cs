@@ -416,6 +416,7 @@ public class ChessBoard
             }
             Console.WriteLine();
         }
+        PrintAdvatage();
     }
 
     public Figure GetFigureAt(char letter, int number)
@@ -425,9 +426,9 @@ public class ChessBoard
         return board[row, col];
     }
 
-    public float CalсulateAdvantage()
+    public float CalculateAdvantage()
     {
-        return BoardEvaluator.CalсulateAdvantage(this);
+        return BoardEvaluator.CalculatedAdvantage(this);
     }
 
     public Figure[,] GetWhiteFigures()
@@ -591,5 +592,43 @@ public class ChessBoard
     public void PrintFen()
     {
         Console.WriteLine("Fen-нотація для поточної позиції на дошці: "+Fen);
+    }
+
+    private void PrintAdvatage()
+    {
+        int sign = IsWhiteTurn ? 1 : -1;
+        float advantage = CalculateAdvantage() * sign;
+        char black = '\u25A0';
+        char white = '\u25A1';
+        int fullSquares = 10;
+        int filledSquares = (int)advantage;
+        Console.Write("Оцінка позиції: [");
+        if (advantage > 0)
+        {
+            PrintSquares(white);
+            Console.Write("|");
+            for (int i = 0; i < filledSquares && i < fullSquares; i++)
+                Console.Write(white);
+            for (int i = filledSquares; i < fullSquares; i++)
+                Console.Write(black);
+        }
+        else
+        {
+            for (int i = 0; i < fullSquares + filledSquares; i++)
+                Console.Write(white);
+            for (int i = fullSquares + filledSquares; i < fullSquares; i++)
+                Console.Write(black);
+            Console.Write("|");
+            PrintSquares(black);
+        }
+        Console.Write($"] {advantage:F2}\n");
+    }
+
+    private void PrintSquares(char square)
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            Console.Write(square);
+        }
     }
 }

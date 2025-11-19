@@ -98,7 +98,7 @@ static public class CalculateSystem
 
         if (depth == 0)
         {
-            return board.CalсulateAdvantage();
+            return board.CalculateAdvantage();
         }
 
         List<Move> allMoves = GenerateLegalMoves(board);

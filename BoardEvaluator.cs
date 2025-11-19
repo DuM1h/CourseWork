@@ -13,7 +13,7 @@ static public class BoardEvaluator
     private const float HangingMinorPenalty = 0.075f;
     private const float HangingRookPenalty = 0.125f;
     private const float HangingQueenPenalty = 0.250f;
-    static public float CalсulateAdvantage(ChessBoard board)
+    static public float CalculatedAdvantage(ChessBoard board)
     {
         int value = 0;
         int opponentValue = 0;
