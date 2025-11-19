@@ -4,8 +4,17 @@ namespace CourseWork;
 
 static public class GameSystem
 {
-    static public void PlayGame(bool isWhitePlayer)
+    const string basicFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
+    static public void PlayGame(string fen)
     {
+        string[] parts = fen.Split(' ');
+        bool isWhitePlayer = parts[1] == "w";
+        PlayGame(isWhitePlayer, fen);
+    }
+    static public void PlayGame(bool isWhitePlayer, string fen = basicFen)
+    {
+        Console.Clear();
         Console.WriteLine("Оберіть складність:");
         Console.WriteLine("1. Легка");
         Console.WriteLine("2. Середня");
@@ -19,13 +28,23 @@ static public class GameSystem
             _ => 4
         };
         Console.Clear();
-        ChessBoard board = new ChessBoard();
+        ChessBoard board = new ChessBoard(fen);
         while (true)
         {
             Console.Clear();
             board.ShowBoard();
             if (board.IsWhiteTurn == isWhitePlayer)
             {
+                var possibleMoves = CalculateSystem.GenerateLegalMoves(board);
+                if (possibleMoves.Count == 0)
+                {
+                    King kingToMove = board.IsWhiteTurn ? board.GetWhiteKing() : board.GetBlackKing();
+                    string color = !board.IsWhiteTurn ? "Білі" : "Чорні";
+                    if (kingToMove.IsChecking(board))
+                        Console.WriteLine(color + " перемогли");
+                    else
+                        Console.WriteLine("Нічия - пат");
+                }
                 Console.WriteLine("Ваш хід. Введіть хід у форматі 'e2 e4':");
                 string input = Console.ReadLine() ?? "";
                 string[] parts = input.Split(' ');
@@ -47,7 +66,6 @@ static public class GameSystem
                 }
                 
                 Move move;
-                var possibleMoves = CalculateSystem.GenerateLegalMoves(board);
                 if (figure.Type == FigureType.Pawn && (toNumber == 1 || toNumber == 8))
                 {
                     move = new Move(figure.Type, (fromLetter, fromNumber), (toLetter, toNumber), FigureType.Null, FigureType.Queen);

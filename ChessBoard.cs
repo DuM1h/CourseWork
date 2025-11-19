@@ -30,11 +30,6 @@ public class ChessBoard
     private Figure lastCapturedFigure;
     private Figure enPassantCapturedPawn;
 
-    public ChessBoard()
-    {
-        Fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        InitializeBoard();
-    }
     public ChessBoard(string fen)
     {
         Fen = fen;

@@ -47,6 +47,7 @@ class Program
         Console.WriteLine("2. Чорні");
         Console.WriteLine("3. Випадковий вибір");
         Console.WriteLine("4. Грати двома сторонами");
+        Console.WriteLine("5. Зіграти з позиції");
         Console.WriteLine("0. Повернутися в головне меню");
         int choice = int.Parse(Console.ReadLine() ?? "0");
         switch (choice)
@@ -61,6 +62,11 @@ class Program
                 GameSystem.PlayGame(isWhite); break;
             case 4:
                 //GameSystem.PlayGame(); break;
+            case 5:
+                Console.Clear();
+                Console.WriteLine("Введіть FEN-нотацію: ");
+                string fen = Console.ReadLine();
+                GameSystem.PlayGame(fen); break;
             case 0:
                 return;
             default:
