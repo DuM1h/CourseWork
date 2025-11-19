@@ -6,6 +6,19 @@ static public class GameSystem
 {
     static public void PlayGame(bool isWhitePlayer)
     {
+        Console.WriteLine("Оберіть складність:");
+        Console.WriteLine("1. Легка");
+        Console.WriteLine("2. Середня");
+        Console.WriteLine("3. Важка");
+        int choice = int.Parse(Console.ReadLine() ?? "2");
+        int depth = choice switch
+        {
+            1 => 2,
+            2 => 4,
+            3 => 6,
+            _ => 4
+        };
+        Console.Clear();
         ChessBoard board = new ChessBoard();
         while (true)
         {
@@ -62,6 +75,35 @@ static public class GameSystem
                     figure.Move(move, board);
                     continue;
                 }
+                if (figure.Type == FigureType.Pawn && board.EnPassantAvailable && board.EnPassantTarget == (toLetter, toNumber))
+                {
+                    move = new Move(figure.Type, (fromLetter, fromNumber), (toLetter, toNumber), board.EnPassantTarget);
+                    if (!possibleMoves.Contains(move))
+                    {
+                        Console.WriteLine("Невірний хід. Спробуйте ще раз.");
+                        Program.Continue();
+                        continue;
+                    }
+                    figure.Move(move, board);
+                    Program.Continue();
+                    continue;
+                }
+                if (figure.Type == FigureType.Pawn)
+                {
+                    if (target == null)
+                        move = new Move(figure.Type, (fromLetter, fromNumber), (toLetter, toNumber));
+                    else
+                        move = new Move(figure.Type, (fromLetter, fromNumber), (toLetter, toNumber), target.Type);
+                    if (!possibleMoves.Contains(move))
+                    {
+                        Console.WriteLine("Невірний хід. Спробуйте ще раз.");
+                        Program.Continue();
+                        continue;
+                    }
+                    figure.Move(move, board);
+                    Program.Continue();
+                    continue;
+                }
                 if (figure.Type == FigureType.King && Math.Abs(toLetter - fromLetter) == 2)
                 {
                     move = new Move(figure.Type, (fromLetter, fromNumber), (toLetter, toNumber), true);
@@ -76,9 +118,9 @@ static public class GameSystem
                     continue;
                 }
                 if (target == null)
-                    move = new Move(figure.Type, (fromLetter, fromNumber), (toLetter, toNumber), FigureType.Null);
+                    move = new Move(figure.Type, (fromLetter, fromNumber), (toLetter, toNumber));
                 else
-                    move = new Move(figure.Type, (fromLetter, fromNumber), (toLetter, toNumber), figure.Type);
+                    move = new Move(figure.Type, (fromLetter, fromNumber), (toLetter, toNumber), target.Type);
                 if (!possibleMoves.Contains(move))
                 {
                     Console.WriteLine("Невірний хід. Спробуйте ще раз. peps");
@@ -90,7 +132,7 @@ static public class GameSystem
             else
             {
                 Console.WriteLine("Хід комп'ютера...");
-                CalculateSystem.CalculateBestMove(board, 4);
+                CalculateSystem.CalculateBestMove(board, depth, false);
             }
             Program.Continue();
         }

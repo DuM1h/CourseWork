@@ -9,7 +9,7 @@ static public class CalculateSystem
     static private Move[,] killerMoves = new Move[MAX_DEPTH, 2];
 
     static private int[,] historyScore = new int[64, 64];
-    static public void CalculateBestMove(ChessBoard board, int depth)
+    static public void CalculateBestMove(ChessBoard board, int depth, bool confirm = true)
     {
         nodesSearched = 0;
 
@@ -51,12 +51,14 @@ static public class CalculateSystem
             }
         }     
         PrintResult(bestFigure, bestMove, depth);
-
-        Console.WriteLine("Оновити позицію?");
-        Console.WriteLine("1. Так");
-        string choice;
-        choice = Console.ReadLine();
-        if (choice == "1" && bestFigure != null)
+        string choice = "0";
+        if (confirm)
+        {
+            Console.WriteLine("Оновити позицію?");
+            Console.WriteLine("1. Так");
+            choice = Console.ReadLine();
+        }
+        if ((choice == "1" && bestFigure != null)||!confirm)
         {
             var figureToMove = board.GetFigureAt(bestMove.From.Item1, bestMove.From.Item2);
             figureToMove.Move(bestMove, board);
