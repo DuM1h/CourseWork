@@ -138,7 +138,7 @@ static public class CalculateSystem
         return alpha;
     }
 
-    static List<Move> GenerateLegalMoves(ChessBoard board)
+    static public List<Move> GenerateLegalMoves(ChessBoard board)
     {
         var moves = new List<Move>();   
         ChessBoard boardCopy = new(board);

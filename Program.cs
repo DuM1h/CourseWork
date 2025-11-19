@@ -13,6 +13,62 @@ class Program
         Console.OutputEncoding = System.Text.Encoding.UTF8;
         Console.InputEncoding = System.Text.Encoding.UTF8;
 
+        int choice;
+        Console.WriteLine("Оберіть, що ви бажаєте:");
+        Console.WriteLine("1. Грати");
+        Console.WriteLine("2. Аналізувати позицію");
+        Console.WriteLine("0. Вийти");
+        choice = int.Parse(Console.ReadLine() ?? "0");
+        switch (choice)
+        {
+            case 1:
+                Console.Clear();
+                Play(); break;
+            case 2:
+                Console.Clear();
+                Analyze(); break;
+            case 0:
+                return;
+            default:
+                Console.WriteLine("Невірний вибір"); break;
+        }
+    }
+
+    static public void Continue()
+    {
+        Console.WriteLine("Для продовження натисніть Enter");
+        Console.ReadLine();
+    }
+
+    static void Play()
+    {
+        Console.WriteLine("Оберіть сторону.");
+        Console.WriteLine("1. Білі");
+        Console.WriteLine("2. Чорні");
+        Console.WriteLine("3. Випадковий вибір");
+        Console.WriteLine("4. Грати двома сторонами");
+        Console.WriteLine("0. Повернутися в головне меню");
+        int choice = int.Parse(Console.ReadLine() ?? "0");
+        switch (choice)
+        {
+            case 1:
+                GameSystem.PlayGame(true); break;
+            case 2:
+                GameSystem.PlayGame(false); break;
+            case 3:
+                Random rand = new Random();
+                bool isWhite = rand.Next(0, 2) == 0;
+                GameSystem.PlayGame(isWhite); break;
+            case 4:
+                //GameSystem.PlayGame(); break;
+            case 0:
+                return;
+            default:
+                Console.WriteLine("Невірний вибір"); break;
+        }
+    }
+    static void Analyze()
+    {
         Console.WriteLine("Введіть FEN-нотацію: ");
         string fen = Console.ReadLine();
         ChessBoard chessBoard = new ChessBoard(fen);
@@ -36,7 +92,7 @@ class Program
                 case "2":
                     Console.WriteLine("Введіть глибину прорахунку (рекомендовано 3-4), не більше 6: ");
                     int depth;
-                    while(!int.TryParse(Console.ReadLine(), out depth) || depth < 1 || depth > 6)
+                    while (!int.TryParse(Console.ReadLine(), out depth) || depth < 1 || depth > 6)
                     {
                         Console.WriteLine("Невірне значення. Спробуйте ще раз.");
                     }
@@ -62,12 +118,6 @@ class Program
                     Console.WriteLine("Невірний вибір.");
                     Continue(); break;
             }
-        } while(choice!="0");
-    }
-
-    static void Continue()
-    {
-        Console.WriteLine("Для продовження натисніть Enter");
-        Console.ReadLine();
+        } while (choice != "0");
     }
 }
