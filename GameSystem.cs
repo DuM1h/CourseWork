@@ -84,7 +84,7 @@ static public class GameSystem
                 var target = board.GetFigureAt(toLetter, toNumber);
                 if (figure == null || (figure.IsWhite != board.IsWhiteTurn))
                 {
-                    Console.WriteLine("Невірний хід. Спробуйте ще раз. pop");
+                    Console.WriteLine("Невірний хід. Спробуйте ще раз.");
                     Program.Continue();
                     continue;
                 }
@@ -95,7 +95,7 @@ static public class GameSystem
                     move = new Move(figure.Type, (fromLetter, fromNumber), (toLetter, toNumber), FigureType.Null, FigureType.Queen);
                     if (!possibleMoves.Contains(move))
                     {
-                        Console.WriteLine("Невірний хід. Спробуйте ще раз.pip");
+                        Console.WriteLine("Невірний хід. Спробуйте ще раз.");
                         Program.Continue();
                         continue;
                     }
@@ -165,7 +165,7 @@ static public class GameSystem
                     move = new Move(figure.Type, (fromLetter, fromNumber), (toLetter, toNumber), target.Type);
                 if (!possibleMoves.Contains(move))
                 {
-                    Console.WriteLine("Невірний хід. Спробуйте ще раз. peps");
+                    Console.WriteLine("Невірний хід. Спробуйте ще раз.");
                     Program.Continue();
                     continue;
                 }
