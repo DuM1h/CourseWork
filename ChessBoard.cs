@@ -290,7 +290,6 @@ public class ChessBoard
 
     private void InitializeBoard()
     {
-        // Ініціалізація шахівниці на основі FEN-нотації
         string[] fenParts;
         fenParts = Fen.Split(' ');
         string[] rows = fenParts[0].Split('/');

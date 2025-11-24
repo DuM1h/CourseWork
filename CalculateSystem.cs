@@ -106,7 +106,7 @@ static public class CalculateSystem
         }
         Console.WriteLine($"\n---");
         Console.WriteLine($"Глибина пошуку: {depth}");
-        Console.WriteLine($"Всього проаналізовано вузлів: {nodesSearched:N0}"); // :N0 для форматування (напр. 1,234,567)
+        Console.WriteLine($"Всього проаналізовано вузлів: {nodesSearched:N0}");
         Console.WriteLine($"---");
     }
 
