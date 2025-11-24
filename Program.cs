@@ -17,6 +17,7 @@ class Program
         int choice;
         do
         {
+            Console.Clear();
             Console.WriteLine("Оберіть, що ви бажаєте:");
             Console.WriteLine("1. Грати");
             Console.WriteLine("2. Аналізувати позицію");
