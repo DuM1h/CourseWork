@@ -13,7 +13,6 @@ class Program
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
         Console.InputEncoding = System.Text.Encoding.UTF8;
-
         int choice;
         do
         {
@@ -22,7 +21,8 @@ class Program
             Console.WriteLine("1. Грати");
             Console.WriteLine("2. Аналізувати позицію");
             Console.WriteLine("0. Вийти");
-            choice = int.Parse(Console.ReadLine() ?? "0");
+            if (!int.TryParse(Console.ReadLine(), out choice))
+                choice = 0;
             switch (choice)
             {
                 case 1:
@@ -60,7 +60,8 @@ class Program
             Console.WriteLine("4. Грати двома сторонами");
             Console.WriteLine("5. Зіграти з позиції");
             Console.WriteLine("0. Повернутися в головне меню");
-            choice = int.Parse(Console.ReadLine() ?? "0");
+            if (!int.TryParse (Console.ReadLine(), out choice))
+                choice = 0;
             switch (choice)
             {
                 case 1:
@@ -96,7 +97,7 @@ class Program
         Console.WriteLine("Введіть FEN-нотацію: ");
         string fen = Console.ReadLine();
         ChessBoard chessBoard = new ChessBoard(fen);
-        string choice;
+        int choice;
         do
         {
             Console.Clear();
@@ -107,13 +108,14 @@ class Program
             Console.WriteLine("5. Ввести нову FEN-нотацію");
             Console.WriteLine("0. Вийти");
 
-            choice = Console.ReadLine();
+            if (!int.TryParse(Console.ReadLine(), out choice))
+                choice = 0;
             switch (choice)
             {
-                case "1":
+                case 1:
                     chessBoard.ShowBoard();
                     Continue(); break;
-                case "2":
+                case 2:
                     Console.WriteLine("Введіть глибину прорахунку (рекомендовано 3-4), не більше 6: ");
                     int depth;
                     while (!int.TryParse(Console.ReadLine(), out depth) || depth < 1 || depth > 6)
@@ -122,26 +124,26 @@ class Program
                     }
                     CalculateSystem.CalculateBestMove(chessBoard, depth);
                     Continue(); break;
-                case "3":
+                case 3:
                     if (chessBoard.Unmove() == 0)
                         Console.WriteLine("Хід відмінено успішно.");
                     else
                         Console.WriteLine("Або хід вже відмінено, або ходу ще не було.");
                     Continue(); break;
-                case "4":
+                case 4:
                     chessBoard.PrintFen();
                     Continue(); break;
-                case "5":
+                case 5:
                     Console.WriteLine("Введіть FEN-нотацію: ");
                     fen = Console.ReadLine();
                     chessBoard = new ChessBoard(fen);
                     Continue(); break;
-                case "0":
+                case 0:
                     return;
                 default:
                     Console.WriteLine("Невірний вибір.");
                     Continue(); break;
             }
-        } while (choice != "0");
+        } while (choice != 0);
     }
 }

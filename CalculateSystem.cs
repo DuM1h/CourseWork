@@ -9,7 +9,7 @@ static public class CalculateSystem
     static private Move[,] killerMoves = new Move[MAX_DEPTH, 2];
 
     static private int[,] historyScore = new int[64, 64];
-    static private bool lackOfFigures;
+    static private bool isLackOfFigures;
     static public void CalculateBestMove(ChessBoard board, int depth, bool confirm = true)
     {
         nodesSearched = 0;
@@ -32,7 +32,7 @@ static public class CalculateSystem
             string color = !board.IsWhiteTurn ? "Білі" : "Чорні";
             if (kingToMove.IsChecking(board))
                 Console.WriteLine(color+" перемогли");
-            else if (lackOfFigures)
+            else if (isLackOfFigures)
                 Console.WriteLine("Нічия - брак фігур");
             else
                 Console.WriteLine("Нічия - пат");
@@ -158,16 +158,10 @@ static public class CalculateSystem
 
     static public List<Move> GenerateLegalMoves(ChessBoard board)
     {
-        bool queenOnBoard = false;
-        bool rookOnBoard = false;
-        bool whiteBishopOnBoard = false;
-        bool blackBishopOnBoard = false;
-        bool twoBishopsOnBoard = false;
-        bool whiteKnightOnBoard = false;
-        bool blackKnightOnBoard = false;
-        bool bishopAndKnightOnBoard = false;
-        bool pawnOnBoard = false;
-        var moves = new List<Move>();   
+        
+        var moves = new List<Move>();
+        if (LackOfFigures(board))
+            return moves;
         ChessBoard boardCopy = new(board);
         for (int i = 0; i < 8; i++)
         {
@@ -176,53 +170,7 @@ static public class CalculateSystem
                 var figure = board.GetFigureAt((char)('h' - j), 8 - i);
                 if (figure == null || figure.IsWhite != board.IsWhiteTurn)
                     continue;
-                if (!lackOfFigures)
-                { 
-                    switch (figure.Type)
-                    {
-                        case FigureType.Queen:
-                            queenOnBoard = true;
-                            break;
-                        case FigureType.Rook:
-                            rookOnBoard = true;
-                            break;
-                        case FigureType.Bishop:
-                            if (figure.IsWhite)
-                            {
-                                if (whiteBishopOnBoard)
-                                    twoBishopsOnBoard = true;
-                                whiteBishopOnBoard = true;
-                                if (whiteKnightOnBoard)
-                                    bishopAndKnightOnBoard = true;
-                            }
-                            else
-                            {
-                                if (blackBishopOnBoard)
-                                    twoBishopsOnBoard = true;
-                                blackBishopOnBoard = true;
-                                if (blackKnightOnBoard)
-                                    bishopAndKnightOnBoard = true;
-                            }
-                            break;
-                        case FigureType.Knight:
-                            if (figure.IsWhite)
-                            {
-                                whiteKnightOnBoard = true;
-                                if (whiteBishopOnBoard)
-                                    bishopAndKnightOnBoard = true;
-                            }
-                            else
-                            {
-                                blackKnightOnBoard = true;
-                                if (blackBishopOnBoard)
-                                    bishopAndKnightOnBoard = true;
-                            }
-                            break;
-                        case FigureType.Pawn:
-                            pawnOnBoard = true;
-                            break;
-                    }
-                }
+                
                 var possibleMoves = figure.GetPossibleMoves(board);
                 foreach (var move in possibleMoves)
                 {
@@ -238,14 +186,9 @@ static public class CalculateSystem
                     }
                     figureCopy.Unmove(boardCopy, move, target);
                 }
-                if (queenOnBoard || rookOnBoard || twoBishopsOnBoard || bishopAndKnightOnBoard || pawnOnBoard)
-                    lackOfFigures = false;
-                else
-                    lackOfFigures = true;
+                
             }
         }
-        if (lackOfFigures)
-            moves.Clear();
         return moves;
     }
 
@@ -299,5 +242,82 @@ static public class CalculateSystem
             killerMoves[depth, 1] = killerMoves[depth, 0];
             killerMoves[depth, 0] = move;
         }
+    }
+
+    static private bool LackOfFigures(ChessBoard board)
+    {
+        bool lack = true;
+        bool queenOnBoard = false;
+        bool rookOnBoard = false;
+        bool whiteBishopOnBoard = false;
+        bool blackBishopOnBoard = false;
+        bool twoBishopsOnBoard = false;
+        bool whiteKnightOnBoard = false;
+        bool blackKnightOnBoard = false;
+        bool bishopAndKnightOnBoard = false;
+        bool pawnOnBoard = false;
+        for (int i = 0; i < 8; i++)
+        {
+            if (!lack)
+                break;
+            for (int j = 0; j < 8; j++)
+            {
+                if (!lack)
+                    break;
+                var figure = board.GetFigureAt((char)('h' - j), 8 - i);
+                if (figure == null)
+                    continue;
+                switch (figure.Type)
+                {
+                    case FigureType.Queen:
+                        queenOnBoard = true;
+                        break;
+                    case FigureType.Rook:
+                        rookOnBoard = true;
+                        break;
+                    case FigureType.Bishop:
+                        if (figure.IsWhite)
+                        {
+                            if (whiteBishopOnBoard)
+                                twoBishopsOnBoard = true;
+                            whiteBishopOnBoard = true;
+                            if (whiteKnightOnBoard)
+                                bishopAndKnightOnBoard = true;
+                        }
+                        else
+                        {
+                            if (blackBishopOnBoard)
+                                twoBishopsOnBoard = true;
+                            blackBishopOnBoard = true;
+                            if (blackKnightOnBoard)
+                                bishopAndKnightOnBoard = true;
+                        }
+                        break;
+                    case FigureType.Knight:
+                        if (figure.IsWhite)
+                        {
+                            whiteKnightOnBoard = true;
+                            if (whiteBishopOnBoard)
+                                bishopAndKnightOnBoard = true;
+                        }
+                        else
+                        {
+                            blackKnightOnBoard = true;
+                            if (blackBishopOnBoard)
+                                bishopAndKnightOnBoard = true;
+                        }
+                        break;
+                    case FigureType.Pawn:
+                        pawnOnBoard = true;
+                        break;
+                }
+                if (queenOnBoard || rookOnBoard || twoBishopsOnBoard || bishopAndKnightOnBoard || pawnOnBoard)
+                    lack = false;
+                else
+                    lack = true;
+            }
+        }
+        isLackOfFigures = lack;
+        return lack;
     }
 }
