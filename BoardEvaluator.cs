@@ -24,7 +24,9 @@ static public class BoardEvaluator
         {
             for (int j = 0; j < 8; j++)
             {
-                Figure fig = board.board[i, j];
+                char figLetter = (char)(i + 'a');
+                int figNumber = j+1;
+                Figure fig = board.GetFigureAt(figLetter, figNumber);
                 if (fig == null)
                     continue;
 

@@ -6,7 +6,7 @@ namespace CourseWork;
 
 public class ChessBoard
 {
-    public Figure[,] board = new Figure[8, 8];
+    private Figure[,] board = new Figure[8, 8];
     public string Fen { get; private set; }
     public bool IsWhiteTurn { get; private set; }
     public bool CanWhiteCastleKingside { get; private set; }
@@ -549,7 +549,7 @@ public class ChessBoard
         if (EnPassantAvailable)
         {
             char letter = EnPassantTarget.Item1;
-            char num = (char)(EnPassantTarget.Item2+'a');
+            char num = (char)(EnPassantTarget.Item2+48);
             fenParts[3] = letter.ToString() + num.ToString();
         }
         else
